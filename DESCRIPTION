@@ -3,7 +3,13 @@ Type: Package
 Title: Reusable shiny modules
 Version: 0.0.99
 Authors@R: person("Ian", "Lyttle", email = "ian.lyttle@schneider-electric.com", role = c("aut", "cre"))
-URL: https://github.com/ijlyttle/shinychord/issues
-Description: More about what it does (maybe more than one line)
+URL: https://github.com/ijlyttle/shinychord
+BugReports: https://github.com/ijlyttle/shinychord/issues
+Description: Reusable shiny modules
 License: MIT + file LICENSE
 LazyData: TRUE
+Depends:
+  R (>= 3.2.1)
+Imports:
+  shiny (>= 0.12.1),
+  shinyjs (>= 0.0.8.3)
