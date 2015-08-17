@@ -1,0 +1,9 @@
+Package: shinychord
+Type: Package
+Title: Reusable shiny modules
+Version: 0.0.99
+Authors@R: person("Ian", "Lyttle", email = "ian.lyttle@schneider-electric.com", role = c("aut", "cre"))
+URL: https://github.com/ijlyttle/shinychord/issues
+Description: More about what it does (maybe more than one line)
+License: MIT + file LICENSE
+LazyData: TRUE
