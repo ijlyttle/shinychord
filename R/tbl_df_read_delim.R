@@ -5,20 +5,20 @@
 #' The list will contain:
 #'
 #' \itemize{
-#'   \item \code{ui_control} \code{shiny::taglist} of control items
-#'   \item \code{ui_response} \code{shing::taglist} of response items
-#'   \item \code{srv_function} a function with reactive code - this function takes a \code{reactiveValues} as its arguement
+#'   \item \code{ui_controller} \code{shiny::taglist} of ui elements for the controller
+#'   \item \code{ui_view} \code{shing::taglist} of ui elements for the view
+#'   \item \code{server_model} a function with reactive code - this function takes a \code{reactiveValues} as its arguement
 #' }
 #'
 #' The list returned by the factory has to be available to both the ui and the server. If not using the \code{shinyApp}
 #' formulation, perhaps \code{global.R} could be useful.
 #'
-#' The component \code{srv_function} will be called in the server function, using the
+#' The component \code{server_model} will be called in the server function, using the
 #' particular \code{reactiveValue} you wish to associate with the "thing".
 #'
 #' @param id    character, tag to prepend to the input and output id's
 #'
-#' @return list containing \code{ui_control}, \code{ui_response}, and \code{srv_function}
+#' @return list containing \code{ui_controller}, \code{ui_view}, and \code{srv_model}
 #'
 tbl_df_read_delim <- function(id){
 
@@ -26,43 +26,51 @@ tbl_df_read_delim <- function(id){
     paste(list(id, ...), collapse = "_")
   }
 
-  ## ui_control ##
-  ui_control <- shiny::tagList()
-  id_control_file <- id_name("control", "file")
+  ## ui_controller ##
+  ui_controller <- shiny::tagList()
+  id_controller_file <- id_name("controller", "file")
 
-  ui_control[[id_control_file]] <-
+  ui_controller[[id_controller_file]] <-
     fileInput(
-      inputId = id_control_file,
+      inputId = id_controller_file,
       label = "File",
       accept = c("text/csv", ".csv", "text/comma-separated-values", "text/plain")
     )
 
-  ## ui_response ##
-  ui_response <- shiny::tagList()
-  id_response_text <- id_name("response", "text")
+  ## ui_view ##
+  ui_view <- shiny::tagList()
+  id_view_text <- id_name("view", "text")
 
-  ui_response[[id_response_text]] <-
+  ui_view[[id_view_text]] <-
     htmlOutput(
-      outputId = id_response_text,
+      outputId = id_view_text,
       container = function(...){
         pre(..., style = "white-space: nowrap;")
       }
     )
 
-  ## srv_function ##
-  srv_function <- function(){
+  ## server_model ##
+  server_model <- function(){
 
     env = parent.frame()
 
     rct_txt <- reactive({
 
-      infile <- env$input[[id_control_file]]$datapath
+      validate(
+        need(env$input[[id_controller_file]], "File not selected")
+      )
+
+      infile <- env$input[[id_controller_file]]$datapath
 
       readr::read_file(infile)
     })
 
-    env$output[[id_response_text]] <-
+    env$output[[id_view_text]] <-
       renderUI({
+
+        validate(
+          need(rct_txt(), "File did not load properly")
+        )
 
         h <- rct_txt()
         h <- readr::read_lines(h, n_max = 7)
@@ -75,9 +83,9 @@ tbl_df_read_delim <- function(id){
   }
 
   list(
-    ui_control = ui_control,
-    ui_response = ui_response,
-    srv_function = srv_function
+    ui_controller = ui_controller,
+    ui_view = ui_view,
+    server_model = server_model
   )
 
 }

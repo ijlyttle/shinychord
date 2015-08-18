@@ -6,12 +6,12 @@ shinyUI(
     title = "",
     sidebarLayout(
       sidebarPanel(
-        chord_tbl_1$ui_control,
-        chord_tbl_2$ui_control
+        chord_tbl_1$ui_controller,
+        chord_tbl_2$ui_controller
       ),
       mainPanel(
-        chord_tbl_1$ui_response,
-        chord_tbl_2$ui_response
+        chord_tbl_1$ui_view,
+        chord_tbl_2$ui_view
       )
     )
   )

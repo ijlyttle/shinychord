@@ -10,7 +10,7 @@ tbl_df_read_delim(id)
 \item{id}{character, tag to prepend to the input and output id's}
 }
 \value{
-list containing \code{ui_control}, \code{ui_response}, and \code{srv_function}
+list containing \code{ui_controller}, \code{ui_view}, and \code{srv_model}
 }
 \description{
 Creates a collection of shiny objects to manage the parsing of a delimited file.
@@ -19,15 +19,15 @@ Creates a collection of shiny objects to manage the parsing of a delimited file.
 The list will contain:
 
 \itemize{
-  \item \code{ui_control} \code{shiny::taglist} of control items
-  \item \code{ui_response} \code{shing::taglist} of response items
-  \item \code{srv_function} a function with reactive code - this function takes a \code{reactiveValues} as its arguement
+  \item \code{ui_controller} \code{shiny::taglist} of ui elements for the controller
+  \item \code{ui_view} \code{shing::taglist} of ui elements for the view
+  \item \code{server_model} a function with reactive code - this function takes a \code{reactiveValues} as its arguement
 }
 
 The list returned by the factory has to be available to both the ui and the server. If not using the \code{shinyApp}
 formulation, perhaps \code{global.R} could be useful.
 
-The component \code{srv_function} will be called in the server function, using the
+The component \code{server_model} will be called in the server function, using the
 particular \code{reactiveValue} you wish to associate with the "thing".
 }
 
