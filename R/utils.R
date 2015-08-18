@@ -19,3 +19,5 @@ df_set_tz <- function(df, tz = "UTC"){
 
   dplyr::mutate_each_(df, funs(fn_tz), colnames(df))
 }
+
+

@@ -4,15 +4,19 @@ library("dplyr")
 
 shinyServer(function(input, output, session) {
 
-  rctval_data <- reactiveValues(
+  rctval_temp <- reactiveValues(
     a = NULL,
     b = NULL
   )
 
-  chord_tbl_1$server_model(rctval_data, "a")
-  chord_tbl_2$server_model(rctval_data, "b")
+  rctval_data <- reactiveValues()
 
-  observe(print(rctval_data$a))
-  observe(print(rctval_data$b))
+  chord_tbl_1$server_model(rctval_temp, "a")
+  chord_list_tbl_1$server_model(rctval_temp, "a", rctval_data)
+
+  chord_tbl_2$server_model(rctval_temp, "b")
+
+  observe(print(rctval_temp$a))
+  observe(print(rctval_temp$b))
 
 })

@@ -32,8 +32,8 @@ tbl_df_read_delim <- function(id){
 
   # specify file
   id_controller_file <- id_name("controller", "file")
-  ui_controller[[id_controller_file]] <-
-    fileInput(
+  ui_controller$file <-
+    shiny::fileInput(
       inputId = id_controller_file,
       label = "File",
       accept = c("text/csv", ".csv", "text/comma-separated-values", "text/plain")
@@ -41,8 +41,8 @@ tbl_df_read_delim <- function(id){
 
   # specify separator
   id_controller_sep <- id_name("controller", "sep")
-  ui_controller[[id_controller_sep]] <-
-    radioButtons(
+  ui_controller$sep <-
+    shiny::radioButtons(
       inputId = id_controller_sep,
       label = "Separator",
       choices = c(Comma = ",", Semicolon = ";", Tab = "\t"),
@@ -54,16 +54,16 @@ tbl_df_read_delim <- function(id){
   tz_choice <- c("UTC", lubridate::olson_time_zones())
 
   id_controller_tzfile <- id_name("controller", "tzfile")
-  ui_controller[[id_controller_tzfile]] <-
-    selectizeInput(
+  ui_controller$tzfile <-
+    shiny::selectizeInput(
       inputId = id_controller_tzfile,
       label = "Timezone in file",
       choices = tz_choice
     )
 
   id_controller_tzloc <- id_name("controller", "tzloc")
-  ui_controller[[id_controller_tzloc]] <-
-    selectizeInput(
+  ui_controller$tzloc <-
+    shiny::selectizeInput(
       inputId = id_controller_tzloc,
       label = "Timezone at location",
       choices = tz_choice
@@ -73,8 +73,8 @@ tbl_df_read_delim <- function(id){
   ui_view <- shiny::tagList()
 
   id_view_text <- id_name("view", "text")
-  ui_view[[id_view_text]] <-
-    htmlOutput(
+  ui_view$text <-
+    shiny::htmlOutput(
       outputId = id_view_text,
       container = function(...){
         pre(..., style = "white-space: nowrap;")
@@ -82,17 +82,17 @@ tbl_df_read_delim <- function(id){
     )
 
   id_view_data <- id_name("view", "data")
-  ui_view[[id_view_data]] <- verbatimTextOutput(id_view_data)
+  ui_view$data <- shiny::verbatimTextOutput(id_view_data)
 
   ## server_model ##
-  server_model <- function(rct_val, comp){
+  server_model <- function(rctval, comp){
 
     env = parent.frame()
 
     rct_txt <- reactive({
 
-      validate(
-        need(env$input[[id_controller_file]], "File not selected")
+      shiny::validate(
+        shiny::need(env$input[[id_controller_file]], "File not selected")
       )
 
       infile <- env$input[[id_controller_file]]$datapath
@@ -132,7 +132,7 @@ tbl_df_read_delim <- function(id){
         lapply(
           list_posixct,
           function(x){
-            col_datetime(tz = env$input[[id_controller_tzfile]])
+            readr::col_datetime(tz = env$input[[id_controller_tzfile]])
           }
         )
 
@@ -143,17 +143,17 @@ tbl_df_read_delim <- function(id){
           col_types = list_parse_datetime
         )
 
-      rct_val[[comp]] <- df_set_tz(df_new, env$input[[id_controller_tzloc]])
+      rctval[[comp]] <- df_set_tz(df_new, env$input[[id_controller_tzloc]])
     })
 
     env$output[[id_view_data]] <-
       renderPrint({
 
-        validate(
-          need(rct_val[[comp]], "No data")
+        shiny::validate(
+          shiny::need(rctval[[comp]], "No data")
         )
 
-        print(rct_val[[comp]])
+        print(rctval[[comp]])
       })
   }
 
