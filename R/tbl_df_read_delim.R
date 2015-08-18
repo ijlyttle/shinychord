@@ -19,6 +19,7 @@
 #' @param id    character, tag to prepend to the input and output id's
 #'
 #' @return list containing \code{ui_controller}, \code{ui_view}, and \code{srv_model}
+#' @export
 #'
 tbl_df_read_delim <- function(id){
 
@@ -28,8 +29,9 @@ tbl_df_read_delim <- function(id){
 
   ## ui_controller ##
   ui_controller <- shiny::tagList()
-  id_controller_file <- id_name("controller", "file")
 
+  # specify file
+  id_controller_file <- id_name("controller", "file")
   ui_controller[[id_controller_file]] <-
     fileInput(
       inputId = id_controller_file,
@@ -37,11 +39,40 @@ tbl_df_read_delim <- function(id){
       accept = c("text/csv", ".csv", "text/comma-separated-values", "text/plain")
     )
 
+  # specify separator
+  id_controller_sep <- id_name("controller", "sep")
+  ui_controller[[id_controller_sep]] <-
+    radioButtons(
+      inputId = id_controller_sep,
+      label = "Separator",
+      choices = c(Comma = ",", Semicolon = ";", Tab = "\t"),
+      selected = ";",
+      inline = TRUE
+    )
+
+  # specify timezones
+  tz_choice <- c("UTC", lubridate::olson_time_zones())
+
+  id_controller_tzfile <- id_name("controller", "tzfile")
+  ui_controller[[id_controller_tzfile]] <-
+    selectizeInput(
+      inputId = id_controller_tzfile,
+      label = "Timezone in file",
+      choices = tz_choice
+    )
+
+  id_controller_tzloc <- id_name("controller", "tzloc")
+  ui_controller[[id_controller_tzloc]] <-
+    selectizeInput(
+      inputId = id_controller_tzloc,
+      label = "Timezone at location",
+      choices = tz_choice
+    )
+
   ## ui_view ##
   ui_view <- shiny::tagList()
-  id_view_text <- id_name("view", "text")
-  id_view_data <- id_name("view", "data")
 
+  id_view_text <- id_name("view", "text")
   ui_view[[id_view_text]] <-
     htmlOutput(
       outputId = id_view_text,
@@ -50,8 +81,8 @@ tbl_df_read_delim <- function(id){
       }
     )
 
+  id_view_data <- id_name("view", "data")
   ui_view[[id_view_data]] <- verbatimTextOutput(id_view_data)
-
 
   ## server_model ##
   server_model <- function(rct_val, comp){
@@ -84,9 +115,36 @@ tbl_df_read_delim <- function(id){
         h
       })
 
-    observe(
-      rct_val[[comp]] <- readr::read_delim(rct_txt(), delim = ";")
-    )
+    observe({
+
+      # make a provisional parsing of the data-frame
+      df_tmp <-
+        readr::read_delim(
+          file = rct_txt(),
+          delim = env$input[[id_controller_sep]]
+        )
+
+      # determine which columns are datetimes
+      is_posixct <- vapply(df_tmp, lubridate::is.POSIXct, logical(1))
+      list_posixct <- is_posixct[is_posixct]
+
+      list_parse_datetime <-
+        lapply(
+          list_posixct,
+          function(x){
+            col_datetime(tz = env$input[[id_controller_tzfile]])
+          }
+        )
+
+      df_new <-
+        readr::read_delim(
+          file = rct_txt(),
+          delim = env$input[[id_controller_sep]],
+          col_types = list_parse_datetime
+        )
+
+      rct_val[[comp]] <- df_set_tz(df_new, env$input[[id_controller_tzloc]])
+    })
 
     env$output[[id_view_data]] <-
       renderPrint({

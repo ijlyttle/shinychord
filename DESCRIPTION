@@ -15,4 +15,5 @@ Imports:
   shinyjs (>= 0.0.8.3),
   readr (>= 0.1.1.9),
   dplyr,
-  htmltools
+  htmltools,
+  lubridate
