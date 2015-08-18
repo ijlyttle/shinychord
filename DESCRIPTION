@@ -13,5 +13,6 @@ Depends:
 Imports:
   shiny (>= 0.12.1),
   shinyjs (>= 0.0.8.3),
-  readr,
+  readr (>= 0.1.1.9),
+  dplyr,
   htmltools

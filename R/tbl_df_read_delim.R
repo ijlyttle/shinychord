@@ -40,6 +40,7 @@ tbl_df_read_delim <- function(id){
   ## ui_view ##
   ui_view <- shiny::tagList()
   id_view_text <- id_name("view", "text")
+  id_view_data <- id_name("view", "data")
 
   ui_view[[id_view_text]] <-
     htmlOutput(
@@ -49,8 +50,11 @@ tbl_df_read_delim <- function(id){
       }
     )
 
+  ui_view[[id_view_data]] <- verbatimTextOutput(id_view_data)
+
+
   ## server_model ##
-  server_model <- function(){
+  server_model <- function(rct_val, comp){
 
     env = parent.frame()
 
@@ -73,13 +77,21 @@ tbl_df_read_delim <- function(id){
         )
 
         h <- rct_txt()
-        h <- readr::read_lines(h, n_max = 7)
+        h <- readr::read_lines(h, n_max = 11)
         h <- paste(h, collapse = "<br/>")
         h <- htmltools::HTML(h)
 
         h
       })
 
+    observe(
+      rct_val[[comp]] <- readr::read_delim(rct_txt(), delim = ";")
+    )
+
+    env$output[[id_view_data]] <-
+      renderPrint({
+        print(rct_val[[comp]])
+      })
   }
 
   list(
