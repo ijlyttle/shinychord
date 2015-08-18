@@ -90,6 +90,11 @@ tbl_df_read_delim <- function(id){
 
     env$output[[id_view_data]] <-
       renderPrint({
+
+        validate(
+          need(rct_val[[comp]], "No data")
+        )
+
         print(rct_val[[comp]])
       })
   }
