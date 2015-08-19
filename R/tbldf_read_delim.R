@@ -1,4 +1,4 @@
-#' tbl_df_read_delim
+#' tbldf_read_delim
 #'
 #' Creates a collection of shiny objects to manage the parsing of a delimited file.
 #'
@@ -21,7 +21,7 @@
 #' @return list containing \code{ui_controller}, \code{ui_view}, and \code{srv_model}
 #' @export
 #'
-tbl_df_read_delim <- function(id){
+tbldf_read_delim <- function(id){
 
   id_name <- function(...){
     paste(list(id, ...), collapse = "_")
