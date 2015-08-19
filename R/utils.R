@@ -20,4 +20,19 @@ df_set_tz <- function(df, tz = "UTC"){
   dplyr::mutate_each_(df, funs(fn_tz), colnames(df))
 }
 
+#' rctval_names
+#'
+#' @param rctval
+#'
+#' @return character vector
+#' @export
+#'
+rctval_names <- function(rctval){
 
+  lst <- shiny::reactiveValuesToList(rctval)
+
+  is_null <- vapply(lst, is.null, FALSE)
+
+  names(lst[!is_null])
+
+}

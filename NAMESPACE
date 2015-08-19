@@ -2,4 +2,6 @@
 
 export(df_set_tz)
 export(rctval_add)
+export(rctval_names)
+export(rctval_remove)
 export(tbl_df_read_delim)

@@ -33,15 +33,16 @@ rctval_add <- function(id) {
   # name of the new element
   id_controller_name <- id_name("controller", "name")
   ui_controller$name <-
-    textInput(
+    shiny::textInput(
       inputId = id_controller_name,
       label = "Name",
       value = ""
     )
 
+  # button to add element
   id_controller_add <- id_name("controller", "add")
   ui_controller$add <-
-    actionButton(
+    shiny::actionButton(
       inputId = id_controller_add,
       label = "Add",
       class = "btn-primary"
@@ -50,11 +51,13 @@ rctval_add <- function(id) {
   ## ui_view ##
   ui_view <- shiny::tagList()
 
+  # status of the possibility to add a member
   id_view_status <- id_name("view", "status")
-  ui_view$status <- verbatimTextOutput(id_view_status)
+  ui_view$status <- shiny::verbatimTextOutput(id_view_status)
 
+  # status of the list, in general
   id_view_members <- id_name("view", "members")
-  ui_view$members <- verbatimTextOutput(id_view_members)
+  ui_view$members <- shiny::verbatimTextOutput(id_view_members)
 
   ## server_model ##
   server_model <- function(rctval_source, comp_source, rctval_dest){
@@ -103,7 +106,7 @@ rctval_add <- function(id) {
 
         str_message <- paste0(
           "Members of list: ",
-          paste(names(rctval_dest), collapse = ", ")
+          paste(rctval_names(rctval_dest), collapse = ", ")
         )
 
         cat(str_message)
