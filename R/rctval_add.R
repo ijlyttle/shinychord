@@ -35,7 +35,7 @@ rctval_add <- function(id) {
   ui_controller$name <-
     shiny::textInput(
       inputId = id_controller_name,
-      label = "Name",
+      label = "Item name",
       value = ""
     )
 
@@ -67,45 +67,54 @@ rctval_add <- function(id) {
     env$output[[id_view_status]] <-
       shiny::renderPrint({
 
+        # start by disabling all the controls
+        shinyjs::disable(id_controller_name)
+        shinyjs::disable(id_controller_add)
+
+        # check to see if the item is not empty
+        str_message_source <- "Item is empty"
+        shiny::validate(
+          shiny::need(rctval_source[[comp_source]], str_message_source)
+        )
+
+        # passed the check, enable the name
+        shinyjs::enable(id_controller_name)
+
+        # check to see if the name is legal
+        str_message_name <-
+          paste(
+            "Item name:",
+            "- must begin with non-numeric character",
+            "- must not contain spaces",
+            "- must not contain some special characters",
+            sep = "\n"
+          )
+
         is_name_valid <- function(x){
           x == make.names(x)
         }
 
-        str_message_name <-
-          paste(
-            "Name must:",
-            "- begin with non-numeric character",
-            "- not contain spaces",
-            "- not contain some special characters",
-            sep = "\n"
-          )
-
-        str_message_source <-
-          "Source item is empty."
-
-        shinyjs::disable(id_controller_add)
-
         shiny::validate(
-          shiny::need(is_name_valid(env$input[[id_controller_name]]), str_message_name),
-          shiny::need(rctval_source[[comp_source]], str_message_source)
+          shiny::need(is_name_valid(env$input[[id_controller_name]]), str_message_name)
         )
 
+        # passed the check, enable the add button
         shinyjs::enable(id_controller_add)
 
-        cat("Source item is ready to be added to list.")
+        cat("Item can be added to list")
       })
 
     env$output[[id_view_members]] <-
       shiny::renderPrint({
 
-        str_message_dest_empty <- "List is empty."
+        str_message_dest_empty <- "List has no items"
 
         shiny::validate(
-          shiny::need(length(names(rctval_dest)) > 0, str_message_dest_empty)
+          shiny::need(length(rctval_names(rctval_dest)) > 0, str_message_dest_empty)
         )
 
         str_message <- paste0(
-          "Members of list: ",
+          "Items in list: ",
           paste(rctval_names(rctval_dest), collapse = ", ")
         )
 

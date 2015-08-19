@@ -31,10 +31,10 @@ rctval_remove <- function(id) {
   ## ui_controller ##
   ui_controller <- shiny::tagList()
 
-  # select element(s) to remove
-  id_controller_elem <- id_name("controller", "elem")
-  ui_controller$elem <-
-    shiny::uiOutput(id_controller_elem)
+  # select item(s) to remove
+  id_controller_item <- id_name("controller", "item")
+  ui_controller$item <-
+    shiny::uiOutput(id_controller_item)
 
   # button to remove element
   id_controller_remove <- id_name("controller", "remove")
@@ -57,10 +57,10 @@ rctval_remove <- function(id) {
 
     env = parent.frame()
 
-    env$output[[id_controller_elem]] <-
+    env$output[[id_controller_item]] <-
       shiny::renderUI({
         selectizeInput(
-          inputId = id_controller_elem,
+          inputId = id_controller_item,
           label = "Items",
           choices = rctval_names(rctval),
           selected = NULL,
@@ -71,30 +71,50 @@ rctval_remove <- function(id) {
     observeEvent(
       eventExpr = env$input[[id_controller_remove]],
       handlerExpr = {
-        rctval[[env$input[[id_controller_elem]]]] <- NULL
+        lapply(
+          env$input[[id_controller_item]],
+          function(x){
+            rctval[[x]] <- NULL
+          }
+        )
+
       }
     )
 
     env$output[[id_view_status]] <-
       shiny::renderPrint({
 
-        str_message_empty <- "List is empty"
+        str_message_empty <- "List has no items"
 
-        str_message_elem <- "No elements selected"
+        str_message_item <- "No item selected"
 
+        # start by disabling all the controls
+        shinyjs::disable(id_controller_item)
         shinyjs::disable(id_controller_remove)
 
+        # validate that the list is not empty
         shiny::validate(
-          shiny::need(length(names(rctval)) > 0, str_message_empty)
+          shiny::need(length(rctval_names(rctval)) > 0, str_message_empty)
         )
 
+        # passed the check, enable the selector
+        shinyjs::enable(id_controller_item)
+
+        # validate that we have a selection made
         shiny::validate(
-          shiny::need(env$input[[id_controller_elem]], str_message_elem)
+          shiny::need(env$input[[id_controller_item]], str_message_item)
         )
 
+        # enable the button
         shinyjs::enable(id_controller_remove)
 
-        cat(env$input[[id_controller_elem]])
+        str_message <- paste0(
+          "Items selected for removal: ",
+          paste(env$input[[id_controller_item]], collapse = ", ")
+        )
+
+        cat(str_message)
+
       })
 
   }
