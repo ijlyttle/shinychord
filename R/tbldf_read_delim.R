@@ -85,7 +85,7 @@ tbldf_read_delim <- function(id){
   ui_view$data <- shiny::verbatimTextOutput(id_view_data)
 
   ## server_model ##
-  server_model <- function(rctval, comp){
+  server_model <- function(rctval, item){
 
     env = parent.frame()
 
@@ -143,17 +143,17 @@ tbldf_read_delim <- function(id){
           col_types = list_parse_datetime
         )
 
-      rctval[[comp]] <- df_set_tz(df_new, env$input[[id_controller_tzloc]])
+      rctval[[item]] <- df_set_tz(df_new, env$input[[id_controller_tzloc]])
     })
 
     env$output[[id_view_data]] <-
       renderPrint({
 
         shiny::validate(
-          shiny::need(rctval[[comp]], "No data")
+          shiny::need(rctval[[item]], "No data")
         )
 
-        print(rctval[[comp]])
+        print(rctval[[item]])
       })
   }
 

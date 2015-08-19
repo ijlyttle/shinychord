@@ -60,7 +60,7 @@ rctval_add <- function(id) {
   ui_view$members <- shiny::verbatimTextOutput(id_view_members)
 
   ## server_model ##
-  server_model <- function(rctval_source, comp_source, rctval_dest){
+  server_model <- function(rctval_source, item_source, rctval_dest){
 
     env = parent.frame()
 
@@ -74,7 +74,7 @@ rctval_add <- function(id) {
         # check to see if the item is not empty
         str_message_source <- "Item is empty"
         shiny::validate(
-          shiny::need(rctval_source[[comp_source]], str_message_source)
+          shiny::need(rctval_source[[item_source]], str_message_source)
         )
 
         # passed the check, enable the name
@@ -124,7 +124,7 @@ rctval_add <- function(id) {
     observeEvent(
       eventExpr = env$input[[id_controller_add]],
       handlerExpr = {
-        rctval_dest[[env$input[[id_controller_name]]]] <- rctval_source[[comp_source]]
+        rctval_dest[[env$input[[id_controller_name]]]] <- rctval_source[[item_source]]
       }
     )
 
