@@ -1,9 +1,9 @@
-#' rctval_remove
+#' rctval_select
 #'
-#' Creates a collection of shiny objects to manage the removal of members
-#' of a set of reactive values.
+#' Creates a list of shiny objects to manage the selection of an item from
+#' a list of reactive values.
 #'
-#' The list will contain:
+#' The returned list will contain:
 #'
 #' \itemize{
 #'   \item \code{ui_controller} \code{shiny::taglist} of ui elements for the controller
@@ -22,7 +22,7 @@
 #' @return list containing \code{ui_controller}, \code{ui_view}, and \code{srv_model}
 #' @export
 #'
-rctval_remove <- function(id) {
+rctval_select <- function(id) {
 
   id_name <- function(...){
     paste(list(id, ...), collapse = "_")
@@ -31,18 +31,9 @@ rctval_remove <- function(id) {
   ## ui_controller ##
   ui_controller <- shiny::tagList()
 
-  # select item(s) to remove
+  # select item to transfer
   id_controller_item <- id_name("controller", "item")
   ui_controller$item <- shiny::uiOutput(id_controller_item)
-
-  # button to remove element
-  id_controller_remove <- id_name("controller", "remove")
-  ui_controller$remove <-
-    actionButton(
-      inputId = id_controller_remove,
-      label = "Remove",
-      class = "btn-danger"
-    )
 
   ## ui_view ##
   ui_view <- shiny::tagList()
@@ -52,7 +43,7 @@ rctval_remove <- function(id) {
   ui_view$status <- shiny::verbatimTextOutput(id_view_status)
 
   ## server_model ##
-  server_model <- function(rctval){
+  server_model <- function(rctval_source, rctval_dest, item_dest){
 
     env = parent.frame()
 
@@ -60,55 +51,36 @@ rctval_remove <- function(id) {
       shiny::renderUI({
         selectizeInput(
           inputId = id_controller_item,
-          label = "Items",
-          choices = rctval_names(rctval),
-          selected = NULL,
-          multiple = TRUE
+          label = "Item",
+          choices = rctval_names(rctval_source)
         )
       })
-
-    observeEvent(
-      eventExpr = env$input[[id_controller_remove]],
-      handlerExpr = {
-        lapply(
-          env$input[[id_controller_item]],
-          function(x){
-            rctval[[x]] <- NULL
-          }
-        )
-      }
-    )
 
     env$output[[id_view_status]] <-
       shiny::renderPrint({
 
-        str_message_empty <- "List has no items"
-
-        str_message_item <- "No item selected"
-
         # start by disabling all the controls
         shinyjs::disable(id_controller_item)
-        shinyjs::disable(id_controller_remove)
 
         # validate that the list is not empty
+        str_message_empty <- "List has no items"
         shiny::validate(
-          shiny::need(length(rctval_names(rctval)) > 0, str_message_empty)
+          shiny::need(length(rctval_names(rctval_source)) > 0, str_message_empty)
         )
 
         # passed the check, enable the selector
         shinyjs::enable(id_controller_item)
 
-        # validate that we have a selection made
+        str_message_item <- "No item selected"
         shiny::validate(
           shiny::need(env$input[[id_controller_item]], str_message_item)
         )
 
-        # enable the button
-        shinyjs::enable(id_controller_remove)
+        rctval_dest[[item_dest]] <- rctval_source[[env$input[[id_controller_item]]]]
 
         str_message <- paste0(
-          "Items selected for removal: ",
-          paste(env$input[[id_controller_item]], collapse = ", ")
+          "Item selected: ",
+          env$input[[id_controller_item]]
         )
 
         cat(str_message)
