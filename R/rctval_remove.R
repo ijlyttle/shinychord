@@ -36,7 +36,7 @@ rctval_remove <- function(id) {
   ui_controller$elem <-
     shiny::uiOutput(id_controller_elem)
 
-  # button to add element
+  # button to remove element
   id_controller_remove <- id_name("controller", "remove")
   ui_controller$remove <-
     actionButton(
@@ -61,7 +61,7 @@ rctval_remove <- function(id) {
       shiny::renderUI({
         selectizeInput(
           inputId = id_controller_elem,
-          label = "Elements to remove",
+          label = "Items",
           choices = rctval_names(rctval),
           selected = NULL,
           multiple = TRUE
