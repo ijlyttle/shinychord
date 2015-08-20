@@ -50,7 +50,7 @@ dygraph_simple <- function(id){
   ui_view$dygraph <- dygraphs::dygraphOutput(id_view_dygraph)
 
   ## server_model ##
-  server_model <- function(rctval, item, colors = NULL){
+  server_model <- function(rctval, item, dygraph_options = NULL){
 
     env = parent.frame()
 
@@ -131,38 +131,42 @@ dygraph_simple <- function(id){
       var_time <- env$input[[id_controller_time]]
       var_y1 <- env$input[[id_controller_y1]]
       var_y2 <- env$input[[id_controller_y2]]
-      var_y <- c(var_y1, var_y2)
+      var_yall <- c(var_y1, var_y2)
 
       str_message_time <- "No time-variable"
       str_message_y <- "No y-variables"
 
       shiny::validate(
         shiny::need(var_time, str_message_time),
-        shiny::need(var_y, str_message_y)
+        shiny::need(var_yall, str_message_y)
       )
 
       # create the mts object
       vec_time <- rctval[[item]][[var_time]]
-      df_num <- rctval[[item]][, var_y]
+      df_num <- rctval[[item]][, var_yall]
 
       dy_xts <- xts::xts(df_num, order.by = vec_time, lubridate::tz(vec_time))
 
-      dyg <-
-        dygraphs::dygraph(dy_xts) %>%
-        dygraphs::dyOptions(useDataTimezone = TRUE)
-#
-#       if(!is.null(input$target2)) {
-#         for(i in input$target2) {
-#           D = D %>% dySeries(i, axis = "y2")
-#         }
-#       }
-#
-#       D
+      print(dygraph_options)
+
+
+      dyg <- dygraphs::dygraph(dy_xts)
+
+      dyopt <- function(...){
+        dygraphs::dyOptions(dyg, ...)
+      }
+      dyg <- do.call(dyopt, dygraph_options)
+
+      dyg <- dygraphs::dyAxis(dyg, "x", label = var_time)
+      dyg <- dygraphs::dyAxis(dyg, "y", label = paste(var_y1, collapse = ", "))
+      dyg <- dygraphs::dyAxis(dyg, "y2", label = paste(var_y2, collapse = ", "))
+
+      # put stuff on y2 axis
+      for(v in var_y2) {
+        dyg <- dygraphs::dySeries(dyg, v, axis = "y2")
+      }
 
       dyg
-#       shiny::validate(
-#         shiny::need(NULL, "OK")
-#       )
     })
 
   }
