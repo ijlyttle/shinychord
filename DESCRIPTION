@@ -18,4 +18,5 @@ Imports:
   htmltools,
   lubridate,
 Suggests:
-  dygraphs
+  dygraphs,
+  xts

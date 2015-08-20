@@ -128,10 +128,43 @@ dygraph_simple <- function(id){
       shinyjs::enable(id_controller_y1)
       shinyjs::enable(id_controller_y2)
 
+      var_time <- env$input[[id_controller_time]]
+      var_y1 <- env$input[[id_controller_y1]]
+      var_y2 <- env$input[[id_controller_y2]]
+      var_y <- c(var_y1, var_y2)
+
+      str_message_time <- "No time-variable"
+      str_message_y <- "No y-variables"
+
       shiny::validate(
-        shiny::need(NULL, "OK")
+        shiny::need(var_time, str_message_time),
+        shiny::need(var_y, str_message_y)
       )
+
+      # create the mts object
+      vec_time <- rctval[[item]][[var_time]]
+      df_num <- rctval[[item]][, var_y]
+
+      dy_xts <- xts::xts(df_num, order.by = vec_time, lubridate::tz(vec_time))
+
+      dyg <-
+        dygraphs::dygraph(dy_xts) %>%
+        dygraphs::dyOptions(useDataTimezone = TRUE)
+#
+#       if(!is.null(input$target2)) {
+#         for(i in input$target2) {
+#           D = D %>% dySeries(i, axis = "y2")
+#         }
+#       }
+#
+#       D
+
+      dyg
+#       shiny::validate(
+#         shiny::need(NULL, "OK")
+#       )
     })
+
   }
 
   list(
