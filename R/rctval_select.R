@@ -47,12 +47,23 @@ rctval_select <- function(id) {
 
     env = parent.frame()
 
+    # reactive values - these will hold the variable names for
+    # the time-based and numeric columns of the data-frame
+    sel <- reactiveValues(
+      item = NULL
+    )
+
+    observe({
+      sel$item <- env$input[[id_controller_item]]
+     })
+
     env$output[[id_controller_item]] <-
       shiny::renderUI({
         selectizeInput(
           inputId = id_controller_item,
           label = "Item",
-          choices = rctval_names(rctval_source)
+          choices = rctval_names(rctval_source),
+          selected = sel$item
         )
       })
 
