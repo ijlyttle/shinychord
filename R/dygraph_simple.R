@@ -147,9 +147,6 @@ dygraph_simple <- function(id){
 
       dy_xts <- xts::xts(df_num, order.by = vec_time, lubridate::tz(vec_time))
 
-      print(dygraph_options)
-
-
       dyg <- dygraphs::dygraph(dy_xts)
 
       dyopt <- function(...){
