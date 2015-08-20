@@ -16,4 +16,6 @@ Imports:
   readr (>= 0.1.1.9),
   dplyr,
   htmltools,
-  lubridate
+  lubridate,
+Suggests:
+  dygraphs

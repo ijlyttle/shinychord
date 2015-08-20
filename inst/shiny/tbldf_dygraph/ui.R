@@ -1,0 +1,23 @@
+library("shiny")
+library("shinyjs")
+library("shinychord")
+
+shinyUI(
+  fluidPage(
+    useShinyjs(),
+    sidebarLayout(
+      sidebarPanel(
+        h4("CSV"),
+        chord_tbl_csv$ui_controller,
+        h4("Dygraph"),
+        chord_dygraph$ui_controller
+      ),
+      mainPanel(
+        h3("CSV"),
+        chord_tbl_csv$ui_view,
+        h3("Dygraph"),
+        chord_dygraph$ui_view
+      )
+    )
+  )
+)

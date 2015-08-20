@@ -103,9 +103,17 @@ tbldf_read_delim <- function(id){
     env$output[[id_view_text]] <-
       renderUI({
 
+        shinyjs::disable(id_controller_sep)
+        shinyjs::disable(id_controller_tzfile)
+        shinyjs::disable(id_controller_tzloc)
+
         validate(
           need(rct_txt(), "File did not load properly")
         )
+
+        shinyjs::enable(id_controller_sep)
+        shinyjs::enable(id_controller_tzfile)
+        shinyjs::enable(id_controller_tzloc)
 
         h <- rct_txt()
         h <- readr::read_lines(h, n_max = 11)
@@ -125,8 +133,9 @@ tbldf_read_delim <- function(id){
         )
 
       # determine which columns are datetimes
-      is_posixct <- vapply(df_tmp, lubridate::is.POSIXct, logical(1))
-      list_posixct <- is_posixct[is_posixct]
+      names_posixct <- df_names_inherits(df_tmp, "POSIXct")
+      list_posixct <- list(names_posixct)
+      names(list_posixct) <- names_posixct
 
       list_parse_datetime <-
         lapply(
@@ -148,6 +157,7 @@ tbldf_read_delim <- function(id){
 
     env$output[[id_view_data]] <-
       renderPrint({
+
 
         shiny::validate(
           shiny::need(rctval[[item]], "No data")
