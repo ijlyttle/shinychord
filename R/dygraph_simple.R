@@ -27,26 +27,30 @@ dygraph_simple <- function(id){
     paste(list(id, ...), collapse = "_")
   }
 
+  name_out <- function(x){
+    paste(x, ".out.", sep = "_")
+  }
+
   ## ui_controller ##
   ui_controller <- shiny::tagList()
 
   # time
   id_controller_time <- id_name("controller", "time")
-  ui_controller$time <- shiny::uiOutput(id_controller_time)
+  ui_controller$time <- shiny::uiOutput(name_out(id_controller_time))
 
   # Y1 axes
   id_controller_y1 <- id_name("controller", "y1")
-  ui_controller$y1 <- shiny::uiOutput(id_controller_y1)
+  ui_controller$y1 <- shiny::uiOutput(name_out(id_controller_y1))
 
   # Y2 axes
   id_controller_y2 <- id_name("controller", "y2")
-  ui_controller$y2 <- shiny::uiOutput(id_controller_y2)
+  ui_controller$y2 <- shiny::uiOutput(name_out(id_controller_y2))
 
   ## ui_view ##
   ui_view <- shiny::tagList()
 
   # dygraph
-  id_view_dygraph <- id_name("controller", "dygraph")
+  id_view_dygraph <- id_name("view", "dygraph")
   ui_view$dygraph <- dygraphs::dygraphOutput(id_view_dygraph)
 
   ## server_model ##
@@ -68,27 +72,30 @@ dygraph_simple <- function(id){
     })
 
     sel <- reactiveValues(
+      time = NULL,
       Y1 = NULL,
       Y2 = NULL
     )
 
     observe({
+      sel$time <- env$input[[id_controller_time]]
       sel$Y1 <- env$input[[id_controller_y1]]
       sel$Y2 <- env$input[[id_controller_y2]]
     })
 
     # select time variable
-    env$output[[id_controller_time]] <-
+    env$output[[name_out(id_controller_time)]] <-
       renderUI(
         selectizeInput(
           inputId = id_controller_time,
           label = "Time",
-          choices = var$chron
+          choices = var$chron,
+          selected = sel$time
         )
       )
 
     # select Y1 variable
-    env$output[[id_controller_y1]] <-
+    env$output[[name_out(id_controller_y1)]] <-
       renderUI(
         selectizeInput(
           inputId = id_controller_y1,
@@ -100,7 +107,7 @@ dygraph_simple <- function(id){
       )
 
     # select Y2 variable
-    env$output[[id_controller_y2]] <-
+    env$output[[name_out(id_controller_y2)]] <-
       renderUI(
         selectizeInput(
           inputId = id_controller_y2,

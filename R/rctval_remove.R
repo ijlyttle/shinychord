@@ -28,12 +28,16 @@ rctval_remove <- function(id) {
     paste(list(id, ...), collapse = "_")
   }
 
+  name_out <- function(x){
+    paste(x, ".out.", sep = "_")
+  }
+
   ## ui_controller ##
   ui_controller <- shiny::tagList()
 
   # select item(s) to remove
   id_controller_item <- id_name("controller", "item")
-  ui_controller$item <- shiny::uiOutput(id_controller_item)
+  ui_controller$item <- shiny::uiOutput(name_out(id_controller_item))
 
   # button to remove element
   id_controller_remove <- id_name("controller", "remove")
@@ -56,7 +60,7 @@ rctval_remove <- function(id) {
 
     env = parent.frame()
 
-    env$output[[id_controller_item]] <-
+    env$output[[name_out(id_controller_item)]] <-
       shiny::renderUI({
         selectizeInput(
           inputId = id_controller_item,

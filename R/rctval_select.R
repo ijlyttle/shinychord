@@ -28,19 +28,23 @@ rctval_select <- function(id) {
     paste(list(id, ...), collapse = "_")
   }
 
+  name_out <- function(x){
+    paste(x, ".out.", sep = "_")
+  }
+
   ## ui_controller ##
   ui_controller <- shiny::tagList()
 
   # select item to transfer
   id_controller_item <- id_name("controller", "item")
-  ui_controller$item <- shiny::uiOutput(id_controller_item)
+  ui_controller$item <- shiny::uiOutput(name_out(id_controller_item))
 
   ## ui_view ##
   ui_view <- shiny::tagList()
 
   # status of the possibility to add a member
   id_view_status <- id_name("view", "status")
-  ui_view$status <- shiny::verbatimTextOutput(id_view_status)
+  ui_view$status <- shiny::verbatimTextOutput(name_out(id_view_status))
 
   ## server_model ##
   server_model <- function(rctval_source, rctval_dest, item_dest){
@@ -57,7 +61,7 @@ rctval_select <- function(id) {
       sel$item <- env$input[[id_controller_item]]
      })
 
-    env$output[[id_controller_item]] <-
+    env$output[[name_out(id_controller_item)]] <-
       shiny::renderUI({
         selectizeInput(
           inputId = id_controller_item,
@@ -67,7 +71,7 @@ rctval_select <- function(id) {
         )
       })
 
-    env$output[[id_view_status]] <-
+    env$output[[name_out(id_view_status)]] <-
       shiny::renderPrint({
 
         # start by disabling all the controls

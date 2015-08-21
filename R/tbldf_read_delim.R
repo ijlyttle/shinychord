@@ -27,6 +27,10 @@ tbldf_read_delim <- function(id){
     paste(list(id, ...), collapse = "_")
   }
 
+  name_out <- function(x){
+    paste(x, ".out.", sep = "_")
+  }
+
   ## ui_controller ##
   ui_controller <- shiny::tagList()
 
