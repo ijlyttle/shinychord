@@ -46,12 +46,11 @@ tbldf_read_delim <- function(id){
   # specify separator
   id_controller_sep <- id_name("controller", "sep")
   ui_controller$sep <-
-    shiny::radioButtons(
+    shiny::selectizeInput(
       inputId = id_controller_sep,
       label = "Separator",
       choices = c(Comma = ",", Semicolon = ";", Tab = "\t"),
-      selected = ";",
-      inline = TRUE
+      selected = ";"
     )
 
   # specify timezones
@@ -162,14 +161,17 @@ tbldf_read_delim <- function(id){
     env$output[[id_view_data]] <-
       renderPrint({
 
-
         shiny::validate(
           shiny::need(rctval[[item]], "No data")
         )
 
         print(rctval[[item]])
       })
+
+    outputOptions(env$output, id_view_data, suspendWhenHidden = FALSE)
+
   }
+
 
   list(
     ui_controller = ui_controller,

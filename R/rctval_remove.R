@@ -88,7 +88,7 @@ rctval_remove <- function(id) {
 
         str_message_empty <- "List has no items"
 
-        str_message_item <- "No item selected"
+        str_message_item <- "No item selected for removal"
 
         # start by disabling all the controls
         shinyjs::disable(id_controller_item)
@@ -118,6 +118,8 @@ rctval_remove <- function(id) {
         cat(str_message)
 
       })
+
+    outputOptions(env$output, id_view_status, suspendWhenHidden = FALSE)
 
   }
 

@@ -51,75 +51,73 @@ rctval_add <- function(id) {
   ## ui_view ##
   ui_view <- shiny::tagList()
 
-  # status of the possibility to add a member
+  # status
   id_view_status <- id_name("view", "status")
   ui_view$status <- shiny::verbatimTextOutput(id_view_status)
-
-  # status of the list, in general
-  id_view_members <- id_name("view", "members")
-  ui_view$members <- shiny::verbatimTextOutput(id_view_members)
 
   ## server_model ##
   server_model <- function(rctval_source, item_source, rctval_dest){
 
     env = parent.frame()
 
-    env$output[[id_view_status]] <-
-      shiny::renderPrint({
+    rct_status <- reactive({
 
-        # start by disabling all the controls
-        shinyjs::disable(id_controller_name)
-        shinyjs::disable(id_controller_add)
-
-        # check to see if the item is not empty
-        str_message_source <- "Item is empty"
-        shiny::validate(
-          shiny::need(rctval_source[[item_source]], str_message_source)
-        )
-
-        # passed the check, enable the name
-        shinyjs::enable(id_controller_name)
-
-        # check to see if the name is legal
-        str_message_name <-
+      str_members <-
+        ifelse(
+          length(rctval_names(rctval_dest)) == 0,
+          "List has no items",
           paste(
-            "Item name:",
-            "- must begin with non-numeric character",
-            "- must not contain spaces",
-            "- must not contain some special characters",
-            sep = "\n"
+            "Items in list",
+            paste(rctval_names(rctval_dest), collapse = ", "),
+            sep = ": "
           )
-
-        is_name_valid <- function(x){
-          x == make.names(x)
-        }
-
-        shiny::validate(
-          shiny::need(is_name_valid(env$input[[id_controller_name]]), str_message_name)
         )
 
-        # passed the check, enable the add button
-        shinyjs::enable(id_controller_add)
+      str_name_quote <- paste0("\"", env$input[[id_controller_name]], "\"")
 
-        cat("Item can be added to list")
-      })
+      str_status_ok <- paste("Item", str_name_quote, "can be added to list", sep = " ")
 
-    env$output[[id_view_members]] <-
-      shiny::renderPrint({
+      # start by disabling all the controls
+      shinyjs::disable(id_controller_name)
+      shinyjs::disable(id_controller_add)
 
-        str_message_dest_empty <- "List has no items"
+      # check to see if the item is not empty
+      str_message_source <- "Item is empty"
+      shiny::validate(
+        shiny::need(rctval_source[[item_source]], str_message_source)
+      )
 
-        shiny::validate(
-          shiny::need(length(rctval_names(rctval_dest)) > 0, str_message_dest_empty)
+      # passed the check, enable the name
+      shinyjs::enable(id_controller_name)
+
+      # check to see if the name is legal
+      str_message_name <-
+        paste(
+          paste("Item name", str_name_quote, "not valid\n", sep = " "),
+          "Item name:",
+          "- must begin with non-numeric character",
+          "- must not contain spaces",
+          "- must not contain some special characters",
+          sep = "\n"
         )
 
-        str_message <- paste0(
-          "Items in list: ",
-          paste(rctval_names(rctval_dest), collapse = ", ")
-        )
+      is_name_valid <- function(x){
+        x == make.names(x)
+      }
 
-        cat(str_message)
-      })
+      shiny::validate(
+        shiny::need(is_name_valid(env$input[[id_controller_name]]), str_message_name)
+      )
+
+      # passed the check, enable the add button
+      shinyjs::enable(id_controller_add)
+
+      paste(str_members, str_status_ok, sep = "\n\n")
+    })
+
+    env$output[[id_view_status]] <- shiny::renderPrint(cat(rct_status()))
+
+    outputOptions(env$output, id_view_status, suspendWhenHidden = FALSE)
 
     observeEvent(
       eventExpr = env$input[[id_controller_add]],

@@ -27,6 +27,4 @@ shinyServer(function(input, output, session) {
 
   chord_list_tbl_remove$server_model(rctval = rctval_data)
 
-  observe(print(rctval_temp$select))
-
 })

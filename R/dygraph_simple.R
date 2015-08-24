@@ -173,6 +173,8 @@ dygraph_simple <- function(id){
       dyg
     })
 
+#    outputOptions(env$output, id_view_dygraph, suspendWhenHidden = FALSE)
+
   }
 
   list(

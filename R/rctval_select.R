@@ -44,7 +44,7 @@ rctval_select <- function(id) {
 
   # status of the possibility to add a member
   id_view_status <- id_name("view", "status")
-  ui_view$status <- shiny::verbatimTextOutput(name_out(id_view_status))
+  ui_view$status <- shiny::verbatimTextOutput(id_view_status)
 
   ## server_model ##
   server_model <- function(rctval_source, rctval_dest, item_dest){
@@ -59,7 +59,7 @@ rctval_select <- function(id) {
 
     observe({
       sel$item <- env$input[[id_controller_item]]
-     })
+    })
 
     env$output[[name_out(id_controller_item)]] <-
       shiny::renderUI({
@@ -71,11 +71,13 @@ rctval_select <- function(id) {
         )
       })
 
-    env$output[[name_out(id_view_status)]] <-
+    env$output[[id_view_status]] <-
       shiny::renderPrint({
 
         # start by disabling all the controls
         shinyjs::disable(id_controller_item)
+
+        rctval_dest[[item_dest]] <- NULL
 
         # validate that the list is not empty
         str_message_empty <- "List has no items"
@@ -101,6 +103,8 @@ rctval_select <- function(id) {
         cat(str_message)
 
       })
+
+    outputOptions(env$output, id_view_status, suspendWhenHidden = FALSE)
 
   }
 
