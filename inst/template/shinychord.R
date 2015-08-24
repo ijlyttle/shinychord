@@ -38,11 +38,18 @@ template <- function(id){
   ## ui_view ##
   ui_view <- shiny::tagList()
 
+  # status
+  id_view_status <- id_name("view", "status")
+  ui_view$status <- shiny::verbatimTextOutput(id_view_status)
 
   ## server_model ##
   server_model <- function(){
 
     env = parent.frame()
+
+    env$output[[id_view_status]] <- shiny::renderPrint({
+      cat("hello world")
+    })
 
   }
 
