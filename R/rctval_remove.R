@@ -18,11 +18,13 @@
 #' particular \code{reactiveValue} you wish to associate with the "thing".
 #'
 #' @param id    character, tag to prepend to the input and output id's
+#' @param item   character, name to use instead of "item"
+#' @param plural character, plural name - if NULL (default), just add "s" to item
 #'
 #' @return list containing \code{ui_controller}, \code{ui_view}, and \code{srv_model}
 #' @export
 #'
-rctval_remove <- function(id) {
+rctval_remove <- function(id, item = "item", plural = NULL) {
 
   id_name <- function(...){
     paste(list(id, ...), collapse = "_")
@@ -30,6 +32,10 @@ rctval_remove <- function(id) {
 
   name_out <- function(x){
     paste(x, ".out.", sep = "_")
+  }
+
+  if (is.null(plural)){
+    plural <- paste0(item, "s")
   }
 
   ## ui_controller ##
@@ -64,7 +70,7 @@ rctval_remove <- function(id) {
       shiny::renderUI({
         selectizeInput(
           inputId = id_controller_item,
-          label = "Items",
+          label = stringr::str_to_title(plural),
           choices = rctval_names(rctval),
           selected = NULL,
           multiple = TRUE
@@ -86,9 +92,9 @@ rctval_remove <- function(id) {
     env$output[[id_view_status]] <-
       shiny::renderPrint({
 
-        str_message_empty <- "List has no items"
+        str_message_empty <- paste("List has no", plural, sep = " ")
 
-        str_message_item <- "No item selected for removal"
+        str_message_item <- paste("No", item, "selected for removal", sep = " ")
 
         # start by disabling all the controls
         shinyjs::disable(id_controller_item)
@@ -110,9 +116,17 @@ rctval_remove <- function(id) {
         # enable the button
         shinyjs::enable(id_controller_remove)
 
-        str_message <- paste0(
-          "Items selected for removal: ",
-          paste(env$input[[id_controller_item]], collapse = ", ")
+        title <-
+          ifelse(
+            length(env$input[[id_controller_item]]) == 1,
+            stringr::str_to_title(item),
+            stringr::str_to_title(plural)
+          )
+
+        str_message <- paste(
+          paste(title, "selected for removal", sep = " "),
+          paste(env$input[[id_controller_item]], collapse = ", "),
+          sep = ": "
         )
 
         cat(str_message)
