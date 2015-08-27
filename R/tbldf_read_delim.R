@@ -1,3 +1,45 @@
+#' tbldf_read
+#'
+#' Given some text, a delimiter, and tz attributes, return a data-frame
+#'
+#' @param file Passed to \code{readr::read_delim}. Either a path to a file, a connection, or literal data (either a single string or a raw vector).
+#' @param delim Passed to \code{readr::read_delim}. Delimiter.
+#' @param tz_file Timezone used to express the time in the file, see \code{lubridate::olson_time_zones()}
+#' @param tz_location Timezone used to express the time at the location, see \code{lubridate::olson_time_zones()}
+#'
+#' @return \code{dplyr::tbl_df()} Dataframe-like structure
+#' @export
+#'
+tbldf_read <- function(file, delim = ",", tz_file = "UTC", tz_location = "UTC"){
+
+  # make a provisional parsing of the data-frame
+  df <- readr::read_delim(file = file, delim = delim)
+
+  # determine which columns are datetimes
+  names_posixct <- df_names_inherits(df, "POSIXct")
+  list_posixct <- as.list(names_posixct)
+  names(list_posixct) <- names_posixct
+
+  if (length(names_posixct) > 0){
+
+    fn_parse <- function(x) {
+      readr::col_datetime(tz = tz_file)
+    }
+
+    # set datetime parsers for the datetime columns
+    list_parse_datetime <- lapply(list_posixct, fn_parse)
+
+    # re-parse, using these parsers
+    df <- readr::read_delim(file = file, delim = delim, col_types = list_parse_datetime)
+
+    # set the timezone
+    df <- df_set_tz(df, tz_location)
+
+  }
+
+  df
+}
+
 #' tbldf_read_delim
 #'
 #' Creates a collection of shiny objects to manage the parsing of a delimited file.
@@ -43,12 +85,12 @@ tbldf_read_delim <- function(id){
       accept = c("text/csv", ".csv", "text/comma-separated-values", "text/plain")
     )
 
-  # specify separator
-  id_controller_sep <- id_name("controller", "sep")
-  ui_controller$sep <-
+  # specify delimiter
+  id_controller_delim <- id_name("controller", "delim")
+  ui_controller$delim <-
     shiny::selectizeInput(
-      inputId = id_controller_sep,
-      label = "Separator",
+      inputId = id_controller_delim,
+      label = "Delimiter",
       choices = c(Comma = ",", Semicolon = ";", Tab = "\t"),
       selected = ";"
     )
@@ -87,11 +129,13 @@ tbldf_read_delim <- function(id){
   id_view_data <- id_name("view", "data")
   ui_view$data <- shiny::verbatimTextOutput(id_view_data)
 
+
   ## server_model ##
   server_model <- function(rctval, item){
 
     env = parent.frame()
 
+    # reactive to read in the raw text from the file-specification input
     rct_txt <- reactive({
 
       shiny::validate(
@@ -103,10 +147,20 @@ tbldf_read_delim <- function(id){
       readr::read_file(infile)
     })
 
+    observe({
+      rctval[[item]] <-
+        tbldf_read(
+          file = rct_txt(),
+          delim = env$input[[id_controller_delim]],
+          tz_file = env$input[[id_controller_tzfile]],
+          tz_location = env$input[[id_controller_tzloc]]
+        )
+    })
+
     env$output[[id_view_text]] <-
       renderUI({
 
-        shinyjs::disable(id_controller_sep)
+        shinyjs::disable(id_controller_delim)
         shinyjs::disable(id_controller_tzfile)
         shinyjs::disable(id_controller_tzloc)
 
@@ -114,7 +168,7 @@ tbldf_read_delim <- function(id){
           need(rct_txt(), "File did not load properly")
         )
 
-        shinyjs::enable(id_controller_sep)
+        shinyjs::enable(id_controller_delim)
         shinyjs::enable(id_controller_tzfile)
         shinyjs::enable(id_controller_tzloc)
 
@@ -126,38 +180,6 @@ tbldf_read_delim <- function(id){
         h
       })
 
-    observe({
-
-      # make a provisional parsing of the data-frame
-      df_tmp <-
-        readr::read_delim(
-          file = rct_txt(),
-          delim = env$input[[id_controller_sep]]
-        )
-
-      # determine which columns are datetimes
-      names_posixct <- df_names_inherits(df_tmp, "POSIXct")
-      list_posixct <- list(names_posixct)
-      names(list_posixct) <- names_posixct
-
-      list_parse_datetime <-
-        lapply(
-          list_posixct,
-          function(x){
-            readr::col_datetime(tz = env$input[[id_controller_tzfile]])
-          }
-        )
-
-      df_new <-
-        readr::read_delim(
-          file = rct_txt(),
-          delim = env$input[[id_controller_sep]],
-          col_types = list_parse_datetime
-        )
-
-      rctval[[item]] <- df_set_tz(df_new, env$input[[id_controller_tzloc]])
-    })
-
     env$output[[id_view_data]] <-
       renderPrint({
 
@@ -168,10 +190,7 @@ tbldf_read_delim <- function(id){
         print(rctval[[item]])
       })
 
-    outputOptions(env$output, id_view_data, suspendWhenHidden = FALSE)
-
   }
-
 
   list(
     ui_controller = ui_controller,
