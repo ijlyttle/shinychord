@@ -20,6 +20,7 @@ tbldf_read <- function(file, delim = ",", tz_file = "UTC", tz_location = "UTC"){
   list_posixct <- as.list(names_posixct)
   names(list_posixct) <- names_posixct
 
+  # run this only if there are datetime columns
   if (length(names_posixct) > 0){
 
     fn_parse <- function(x) {
@@ -98,6 +99,7 @@ tbldf_read_delim <- function(id){
   # specify timezones
   tz_choice <- c("UTC", lubridate::olson_time_zones())
 
+  # timezone as expressed in file
   id_controller_tzfile <- id_name("controller", "tzfile")
   ui_controller$tzfile <-
     shiny::selectizeInput(
@@ -106,6 +108,7 @@ tbldf_read_delim <- function(id){
       choices = tz_choice
     )
 
+  # timezone at location
   id_controller_tzloc <- id_name("controller", "tzloc")
   ui_controller$tzloc <-
     shiny::selectizeInput(
@@ -117,6 +120,7 @@ tbldf_read_delim <- function(id){
   ## ui_view ##
   ui_view <- shiny::tagList()
 
+  # shows the raw text of the file (first few lines)
   id_view_text <- id_name("view", "text")
   ui_view$text <-
     shiny::htmlOutput(
@@ -126,9 +130,9 @@ tbldf_read_delim <- function(id){
       }
     )
 
+  # shows the first few lines of the parsed data-frame
   id_view_data <- id_name("view", "data")
   ui_view$data <- shiny::verbatimTextOutput(id_view_data)
-
 
   ## server_model ##
   server_model <- function(rctval, item){
@@ -147,6 +151,8 @@ tbldf_read_delim <- function(id){
       readr::read_file(infile)
     })
 
+    # this needs to be wrapped in a reactive expression
+    # sets the reactive output
     observe({
       rctval[[item]] <-
         tbldf_read(
@@ -157,6 +163,7 @@ tbldf_read_delim <- function(id){
         )
     })
 
+    # sets the output for the raw text
     env$output[[id_view_text]] <-
       renderUI({
 
@@ -180,6 +187,7 @@ tbldf_read_delim <- function(id){
         h
       })
 
+    # sets the output for the parsed dataframe
     env$output[[id_view_data]] <-
       renderPrint({
 

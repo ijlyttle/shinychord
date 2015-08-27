@@ -17,14 +17,20 @@
 #' The component \code{server_model} will be called in the server function, using the
 #' particular \code{reactiveValue} you wish to associate with the "thing".
 #'
-#' @param id    character, tag to prepend to the input and output id's
+#' @param id     character, tag to prepend to the input and output id's
+#' @param item   character, name to use instead of "item"
+#' @param plural character, plural name - if NULL (default), just add "s" to item
 #'
 #' @return list containing \code{ui_controller}, \code{ui_view}, and \code{srv_model}
 #' @export
-rctval_add <- function(id) {
+rctval_add <- function(id, item = "item", plural = NULL) {
 
   id_name <- function(...){
     paste(list(id, ...), collapse = "_")
+  }
+
+  if (is.null(plural)){
+    plural <- paste0(item, "s")
   }
 
   ## ui_controller ##
@@ -35,7 +41,7 @@ rctval_add <- function(id) {
   ui_controller$name <-
     shiny::textInput(
       inputId = id_controller_name,
-      label = "Item name",
+      label = paste(stringr::str_to_title(item), "name", sep = " "),
       value = ""
     )
 
@@ -65,9 +71,9 @@ rctval_add <- function(id) {
       str_members <-
         ifelse(
           length(rctval_names(rctval_dest)) == 0,
-          "List has no items",
+          paste("List has no", plural, sep = " "),
           paste(
-            "Items in list",
+            paste(stringr::str_to_title(plural), "in list", sep = " "),
             paste(rctval_names(rctval_dest), collapse = ", "),
             sep = ": "
           )
@@ -75,14 +81,19 @@ rctval_add <- function(id) {
 
       str_name_quote <- paste0("\"", env$input[[id_controller_name]], "\"")
 
-      str_status_ok <- paste("Item", str_name_quote, "can be added to list", sep = " ")
+      str_status_ok <- paste(
+        stringr::str_to_title(item),
+        str_name_quote,
+        "can be added to list",
+        sep = " "
+      )
 
       # start by disabling all the controls
       shinyjs::disable(id_controller_name)
       shinyjs::disable(id_controller_add)
 
       # check to see if the item is not empty
-      str_message_source <- "Item is empty"
+      str_message_source <- paste(stringr::str_to_title(item), "is empty", sep = " ")
       shiny::validate(
         shiny::need(rctval_source[[item_source]], str_message_source)
       )
@@ -93,8 +104,14 @@ rctval_add <- function(id) {
       # check to see if the name is legal
       str_message_name <-
         paste(
-          paste("Item name", str_name_quote, "not valid\n", sep = " "),
-          "Item name:",
+          paste(
+            stringr::str_to_title(item),
+            "name",
+            str_name_quote,
+            "not valid\n",
+            sep = " "
+          ),
+          paste(stringr::str_to_title(item), "name:", sep = " "),
           "- must begin with non-numeric character",
           "- must not contain spaces",
           "- must not contain some special characters",

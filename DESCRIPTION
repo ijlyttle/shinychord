@@ -17,6 +17,7 @@ Imports:
   dplyr,
   htmltools,
   lubridate,
+  stringr
 Suggests:
   dygraphs,
   xts

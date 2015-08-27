@@ -17,12 +17,14 @@
 #' The component \code{server_model} will be called in the server function, using the
 #' particular \code{reactiveValue} you wish to associate with the "thing".
 #'
-#' @param id    character, tag to prepend to the input and output id's
+#' @param id     character, tag to prepend to the input and output id's
+#' @param item   character, name to use instead of "item"
+#' @param plural character, plural name - if NULL (default), just add "s" to item
 #'
 #' @return list containing \code{ui_controller}, \code{ui_view}, and \code{srv_model}
 #' @export
 #'
-rctval_select <- function(id) {
+rctval_select <- function(id, item = "item", plural = NULL) {
 
   id_name <- function(...){
     paste(list(id, ...), collapse = "_")
@@ -30,6 +32,10 @@ rctval_select <- function(id) {
 
   name_out <- function(x){
     paste(x, ".out.", sep = "_")
+  }
+
+  if (is.null(plural)){
+    plural <- paste0(item, "s")
   }
 
   ## ui_controller ##
@@ -65,7 +71,7 @@ rctval_select <- function(id) {
       shiny::renderUI({
         selectizeInput(
           inputId = id_controller_item,
-          label = "Item",
+          label = paste(stringr::str_to_title(item), "name", sep = " "),
           choices = rctval_names(rctval_source),
           selected = sel$item
         )
@@ -80,7 +86,7 @@ rctval_select <- function(id) {
         rctval_dest[[item_dest]] <- NULL
 
         # validate that the list is not empty
-        str_message_empty <- "List has no items"
+        str_message_empty <- paste("List has no", plural, sep = " ")
         shiny::validate(
           shiny::need(length(rctval_names(rctval_source)) > 0, str_message_empty)
         )
@@ -88,16 +94,18 @@ rctval_select <- function(id) {
         # passed the check, enable the selector
         shinyjs::enable(id_controller_item)
 
-        str_message_item <- "No item selected"
+        str_message_item <- paste("No", item, "selected", sep = " ")
+
         shiny::validate(
           shiny::need(env$input[[id_controller_item]], str_message_item)
         )
 
         rctval_dest[[item_dest]] <- rctval_source[[env$input[[id_controller_item]]]]
 
-        str_message <- paste0(
-          "Item selected: ",
-          env$input[[id_controller_item]]
+        str_message <- paste(
+          paste(stringr::str_to_title(item), "selected", sep = " "),
+          env$input[[id_controller_item]],
+          sep = ": "
         )
 
         cat(str_message)
