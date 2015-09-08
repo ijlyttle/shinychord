@@ -4,10 +4,14 @@
 \alias{rctval_remove}
 \title{rctval_remove}
 \usage{
-rctval_remove(id)
+rctval_remove(id, item = "item", plural = NULL)
 }
 \arguments{
 \item{id}{character, tag to prepend to the input and output id's}
+
+\item{item}{character, name to use instead of "item"}
+
+\item{plural}{character, plural name - if NULL (default), just add "s" to item}
 }
 \value{
 list containing \code{ui_controller}, \code{ui_view}, and \code{srv_model}

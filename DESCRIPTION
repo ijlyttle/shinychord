@@ -20,4 +20,5 @@ Imports:
   stringr
 Suggests:
   dygraphs,
-  xts
+  xts,
+  xformplus
