@@ -14,8 +14,8 @@ We give a way to expose only a few reactive values.
 
 A shinychord is simply a function that takes `id` as its argument. It returns a list with three items:
 
-- `ui_controller` a `shiny::taglist` containing ui elements focusing on inputs
-- `ui_view` a `shiny::taglist` containing ui elements focusing on outputs
+- `ui_controller` a `shiny::tagList` containing ui elements focusing on inputs
+- `ui_view` a `shiny::tagList` containing ui elements focusing on outputs
 - `server_model` a function that contains all the server logic
 
 As you might imagine, the names on this list are inspired by the model-view-controller paradigm.
@@ -27,9 +27,9 @@ Let's say we wanted a shinychord to upload and parse a delimited file. We start 
 ```R
 ch_upload_parse <- function(id){
 
-  ui_controller <- shiny::taglist()
+  ui_controller <- shiny::tagList()
 
-  ui_view <- shiny::taglist()
+  ui_view <- shiny::tagList()
 
   server_model <- function(...){
   
@@ -64,7 +64,7 @@ This function will be very handy as we define the inputs and outputs.
 We could make this as fancy as we like, but let's consider a simple set of controls, comprised of a file-upload input and a select input (to choose a delimiter)
 
 ```R
-ui_controller <- shiny::taglist()
+ui_controller <- shiny::tagList()
 
 id_controller_file <- id_name("controller", "file")
 ui_controller$file <-
@@ -153,7 +153,7 @@ server_model <- function(rctval, item){
   # sets the output for the raw text
   env$output[[id_view_text]] <-
     renderText({
-
+      
       shiny::validate(
         shiny::need(rct_txt(), "File did not load properly")
       )
@@ -161,19 +161,21 @@ server_model <- function(rctval, item){
       h <- rct_txt()
       h <- readr::read_lines(h, n_max = 10)
       
-      h
+      paste(h, collapse = "\n")
     })
+
 
   # sets the output for the parsed dataframe
   env$output[[id_view_data]] <-
-    renderText({
-
+    renderPrint({
+      
       shiny::validate(
         shiny::need(rctval[[item]], "No data")
       )
-
-      glimpse(rctval[[item]])
+      
+      dplyr::glimpse(rctval[[item]])
     })
+
 
 }
 ```
@@ -185,7 +187,11 @@ So here are all the elements from above, combined into a shinychord function:
 ```R
 ch_upload_parse <- function(id){
 
-  ui_controller <- shiny::taglist()
+  id_name <- function(...){
+    paste(list(id, ...), collapse = "_")
+  }
+
+  ui_controller <- shiny::tagList()
 
   id_controller_file <- id_name("controller", "file")
   ui_controller$file <-
@@ -204,7 +210,7 @@ ch_upload_parse <- function(id){
       selected = ";"
     )
   
-  ui_view <- shiny::taglist()
+  ui_view <- shiny::tagList()
   
   # shows the raw text of the file (first few lines)
   id_view_text <- id_name("view", "text")
@@ -248,7 +254,7 @@ ch_upload_parse <- function(id){
     # sets the output for the raw text
     env$output[[id_view_text]] <-
       renderText({
-  
+        
         shiny::validate(
           shiny::need(rct_txt(), "File did not load properly")
         )
@@ -256,19 +262,20 @@ ch_upload_parse <- function(id){
         h <- rct_txt()
         h <- readr::read_lines(h, n_max = 10)
         
-        h
+        paste(h, collapse = "\n")
       })
   
     # sets the output for the parsed dataframe
     env$output[[id_view_data]] <-
-      renderText({
-  
+      renderPrint({
+        
         shiny::validate(
           shiny::need(rctval[[item]], "No data")
         )
-  
-        glimpse(rctval[[item]])
+        
+        dplyr::glimpse(rctval[[item]])
       })
+
   
   }
   
@@ -283,6 +290,10 @@ ch_upload_parse <- function(id){
 ### Using the shinychord in an app
 
 Here's where we can see a benefit of this approach, as all the interal complexity of the shinychord has been encapuslated, exposing only the bits we need.
+
+For the shiny developer, instead of developing a file-parser for every occasion, or cutting and pasting from a template (and managing the id's), she or he can use a shinychord - set an `id` in one place, and create a reactive value into which the `server_model` function can leave the resulting dataframe.
+
+The shinychord function can be created once and used everywhere.
 
 ```R
 library("shiny")
