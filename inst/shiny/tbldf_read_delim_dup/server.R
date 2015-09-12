@@ -9,8 +9,16 @@ shinyServer(function(input, output, session) {
     b = NULL
   )
 
-  chord_tbl_1$server_model(rctval = rctval_temp, item = "a")
-  chord_tbl_2$server_model(rctval = rctval_temp, item = "b")
+  chord_tbl_1$server_model(
+    input, output, session,
+    rctval = rctval_temp,
+    item_data = "a"
+  )
+  chord_tbl_2$server_model(
+    input, output, session,
+    rctval = rctval_temp,
+    item_data = "b"
+  )
 
   observe(print(rctval_temp$a))
   observe(print(rctval_temp$b))

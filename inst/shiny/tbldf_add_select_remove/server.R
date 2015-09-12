@@ -11,7 +11,11 @@ shinyServer(function(input, output, session) {
 
   rctval_data <- reactiveValues()
 
-  chord_tbl$server_model(rctval = rctval_temp, item = "csv")
+  chord_tbl$server_model(
+    input, output, session,
+    rctval = rctval_temp,
+    item_data = "csv"
+  )
 
   chord_list_tbl_add$server_model(
     rctval_source = rctval_temp,

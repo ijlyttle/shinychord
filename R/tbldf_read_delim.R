@@ -92,36 +92,38 @@ tbldf_read_delim <- function(id){
   ui_view$data <- shiny::verbatimTextOutput(id_view_data)
 
   ## server_model ##
-  server_model <- function(rctval, item){
+  server_model <- function(input, output, session, rctval, item_data){
 
-    env = parent.frame()
+    # reactives
 
     # reactive to read in the raw text from the file-specification input
     rct_txt <- reactive({
 
       shiny::validate(
-        shiny::need(env$input[[id_controller_file]], "File not selected")
+        shiny::need(input[[id_controller_file]], "File not selected")
       )
 
-      infile <- env$input[[id_controller_file]]$datapath
+      infile <- input[[id_controller_file]]$datapath
 
       readr::read_file(infile)
     })
 
-    # this needs to be wrapped in a reactive expression
-    # sets the reactive output
+
+    # observers
+
     observe({
-      rctval[[item]] <-
-        xformplus::tbldf_read(
+      rctval[[item_data]] <-
+        readr::read_delim(
           file = rct_txt(),
-          delim = env$input[[id_controller_delim]],
-          tz_file = env$input[[id_controller_tzfile]],
-          tz_location = env$input[[id_controller_tzloc]]
+          delim = input[[id_controller_delim]],
+          locale = readr::locale(tz = input[[id_controller_tzfile]])
         )
     })
 
+    # outputs
+
     # sets the output for the raw text
-    env$output[[id_view_text]] <-
+    output[[id_view_text]] <-
       renderUI({
 
         shinyjs::disable(id_controller_delim)
@@ -145,14 +147,14 @@ tbldf_read_delim <- function(id){
       })
 
     # sets the output for the parsed dataframe
-    env$output[[id_view_data]] <-
+    output[[id_view_data]] <-
       renderPrint({
 
         shiny::validate(
-          shiny::need(rctval[[item]], "No data")
+          shiny::need(rctval[[item_data]], "No data")
         )
 
-        print(rctval[[item]])
+        print(rctval[[item_data]])
       })
 
   }

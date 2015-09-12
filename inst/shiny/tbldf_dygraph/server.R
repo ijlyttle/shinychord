@@ -13,10 +13,18 @@ shinyServer(function(input, output, session) {
     retainDateWindow = TRUE
   )
 
-  chord_tbl_csv$server_model(rctval = rctval_temp, item = "csv")
-  chord_dygraph$server_model(
+  chord_tbl_csv$server_model(
+    input, output, session,
     rctval = rctval_temp,
-    item = "csv",
+    item_data = "csv"
+  )
+
+#  observe(str(rctval_temp$csv))
+
+  observe(df <- rctval_temp$csv)
+
+  chord_dygraph$server_model(
+    df,
     dygraph_options = data_dygraphOptions
   )
 

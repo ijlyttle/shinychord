@@ -54,9 +54,21 @@ dygraph_simple <- function(id){
   ui_view$dygraph <- dygraphs::dygraphOutput(id_view_dygraph)
 
   ## server_model ##
-  server_model <- function(rctval, item, dygraph_options = NULL){
+  server_model <- function(data, dygraph_options = NULL){
 
-    env = parent.frame()
+    env <- parent.frame()
+
+    observe(makeReactiveBinding("data"))
+
+    # taken from ggvis
+#     if (!shiny::is.reactive(data)){
+#       observe({
+#         static_data <- data
+#         data <- function() static_data
+#       })
+#     }
+
+    observe(str(data))
 
     # reactive values - these will hold the variable names for
     # the time-based and numeric columns of the data-frame
@@ -67,8 +79,8 @@ dygraph_simple <- function(id){
 
     # at some point, have this work with dates, as well as date-times
     observe({
-      var$chron <- df_names_inherits(rctval[[item]], "POSIXct")
-      var$numeric <- df_names_inherits(rctval[[item]], "numeric")
+      var$chron <- df_names_inherits(data, "POSIXct")
+      var$numeric <- df_names_inherits(data, "numeric")
     })
 
     sel <- reactiveValues(
@@ -128,7 +140,7 @@ dygraph_simple <- function(id){
 
       str_message_nodata <- "No data"
       shiny::validate(
-        shiny::need(rctval[[item]], str_message_nodata)
+        shiny::need(data, str_message_nodata)
       )
 
       shinyjs::enable(id_controller_time)
@@ -149,8 +161,8 @@ dygraph_simple <- function(id){
       )
 
       # create the mts object
-      vec_time <- rctval[[item]][[var_time]]
-      df_num <- rctval[[item]][, var_yall]
+      vec_time <- data[[var_time]]
+      df_num <- data[, var_yall]
 
       dy_xts <- xts::xts(df_num, order.by = vec_time, lubridate::tz(vec_time))
 
