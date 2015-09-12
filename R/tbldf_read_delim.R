@@ -53,6 +53,16 @@ tbldf_read_delim <- function(id){
       selected = ";"
     )
 
+  # specify decimal
+  id_controller_decimal_mark <- id_name("controller", "decimal_mark")
+  ui_controller$decimal_mark <-
+    shiny::selectizeInput(
+      inputId = id_controller_decimal_mark,
+      label = "Decimal mark",
+      choices = c(Point = ".", Comma = ","),
+      selected = "."
+    )
+
   # specify timezones
   tz_choice <- c("UTC", lubridate::olson_time_zones())
 
@@ -113,7 +123,10 @@ tbldf_read_delim <- function(id){
         readr::read_delim(
           file = rct_txt(),
           delim = input[[id_controller_delim]],
-          locale = readr::locale(tz = input[[id_controller_tz]])
+          locale = readr::locale(
+            decimal_mark = input[[id_controller_decimal_mark]],
+            tz = input[[id_controller_tz]]
+          )
         )
     })
 
@@ -124,6 +137,7 @@ tbldf_read_delim <- function(id){
       renderUI({
 
         shinyjs::disable(id_controller_delim)
+        shinyjs::disable(id_controller_decimal_mark)
         shinyjs::disable(id_controller_tz)
 
         validate(
@@ -131,6 +145,7 @@ tbldf_read_delim <- function(id){
         )
 
         shinyjs::enable(id_controller_delim)
+        shinyjs::enable(id_controller_decimal_mark)
         shinyjs::enable(id_controller_tz)
 
         h <- rct_txt()
