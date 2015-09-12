@@ -8,6 +8,8 @@
 #' @return dataframe
 #' @export
 #'
+#' Look to get rid of this function
+#'
 df_set_tz <- function(df, tz = "UTC"){
 
   fn_tz <- function(x){

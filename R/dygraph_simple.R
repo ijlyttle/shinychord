@@ -40,7 +40,7 @@ dygraph_simple <- function(id){
 
   # Y1 axes
   id_controller_y1 <- id_name("controller", "y1")
-  ui_controller$y1 <- shiny::uiOutput(name_out(id_controller_y1))
+  ui_controller$y1 <- shinyjs::disabled(shiny::uiOutput(name_out(id_controller_y1)))
 
   # Y2 axes
   id_controller_y2 <- id_name("controller", "y2")
@@ -54,115 +54,94 @@ dygraph_simple <- function(id){
   ui_view$dygraph <- dygraphs::dygraphOutput(id_view_dygraph)
 
   ## server_model ##
-  server_model <- function(data, dygraph_options = NULL){
+  server_model <- function(
+    input, output, session,
+    rctval, item_data, item_dyopt
+  ){
 
-    env <- parent.frame()
+    # reactives
+    rct_data <- reactive({
 
-    observe(makeReactiveBinding("data"))
+      shiny::validate(
+        shiny::need(rctval[[item_data]], "No data")
+      )
 
-    # taken from ggvis
-#     if (!shiny::is.reactive(data)){
-#       observe({
-#         static_data <- data
-#         data <- function() static_data
-#       })
-#     }
-
-    observe(str(data))
-
-    # reactive values - these will hold the variable names for
-    # the time-based and numeric columns of the data-frame
-    var <- reactiveValues(
-      chron = NULL,
-      numeric = NULL
-    )
-
-    # at some point, have this work with dates, as well as date-times
-    observe({
-      var$chron <- df_names_inherits(data, "POSIXct")
-      var$numeric <- df_names_inherits(data, "numeric")
+      rctval[[item_data]]
     })
 
-    sel <- reactiveValues(
+    rct_var_time <- reactive({
+      df_names_inherits(rct_data(), c("POSIXct"))
+    })
+
+    rct_var_num <- reactive({
+      df_names_inherits(rct_data(), c("numeric", "integer"))
+    })
+
+    selection <- reactiveValues(
       time = NULL,
       Y1 = NULL,
       Y2 = NULL
     )
 
-    observe({
-      sel$time <- env$input[[id_controller_time]]
-      sel$Y1 <- env$input[[id_controller_y1]]
-      sel$Y2 <- env$input[[id_controller_y2]]
+    # observers
+    shiny::observe({
+      selection$time <- input[[id_controller_time]]
+      selection$Y1 <- input[[id_controller_y1]]
+      selection$Y2 <- input[[id_controller_y2]]
     })
 
+    # outputs
+
     # select time variable
-    env$output[[name_out(id_controller_time)]] <-
+    output[[name_out(id_controller_time)]] <-
       renderUI(
         selectizeInput(
           inputId = id_controller_time,
           label = "Time",
-          choices = var$chron,
-          selected = sel$time
+          choices = rct_var_time(),
+          selected = selection$time
         )
       )
 
     # select Y1 variable
-    env$output[[name_out(id_controller_y1)]] <-
+    output[[name_out(id_controller_y1)]] <-
       renderUI(
         selectizeInput(
           inputId = id_controller_y1,
           label = "Y1 axis",
-          choices = setdiff(var$numeric, env$input[[id_controller_y2]]),
+          choices = setdiff(rct_var_num(), input[[id_controller_y2]]),
           multiple = TRUE,
-          selected = sel$Y1
+          selected = selection$Y1
         )
       )
 
     # select Y2 variable
-    env$output[[name_out(id_controller_y2)]] <-
+    output[[name_out(id_controller_y2)]] <-
       renderUI(
         selectizeInput(
           inputId = id_controller_y2,
           label = "Y2 axis",
-          choices = setdiff(var$numeric, env$input[[id_controller_y1]]),
+          choices = setdiff(rct_var_num(), input[[id_controller_y1]]),
           multiple = TRUE,
-          selected = sel$Y2
+          selected = selection$Y2
         )
       )
-
-
     # dygraph
-    env$output[[id_view_dygraph]] <- dygraphs::renderDygraph({
+    output[[id_view_dygraph]] <- dygraphs::renderDygraph({
 
-      shinyjs::disable(id_controller_time)
-      shinyjs::disable(id_controller_y1)
-      shinyjs::disable(id_controller_y2)
-
-      str_message_nodata <- "No data"
-      shiny::validate(
-        shiny::need(data, str_message_nodata)
-      )
-
-      shinyjs::enable(id_controller_time)
-      shinyjs::enable(id_controller_y1)
-      shinyjs::enable(id_controller_y2)
-
-      var_time <- env$input[[id_controller_time]]
-      var_y1 <- env$input[[id_controller_y1]]
-      var_y2 <- env$input[[id_controller_y2]]
+      var_time <- selection$time
+      var_y1 <- selection$Y1
+      var_y2 <- selection$Y2
       var_yall <- c(var_y1, var_y2)
 
-      str_message_time <- "No time-variable"
-      str_message_y <- "No y-variables"
-
       shiny::validate(
-        shiny::need(var_time, str_message_time),
-        shiny::need(var_yall, str_message_y)
+        shiny::need(var_time, "No time-variable"),
+        shiny::need(var_yall, "No y-variables")
       )
 
       # create the mts object
-      vec_time <- data[[var_time]]
-      df_num <- data[, var_yall]
+      vec_time <- rct_data()[[var_time]]
+      df_num <- rct_data()[, var_yall]
 
       dy_xts <- xts::xts(df_num, order.by = vec_time, lubridate::tz(vec_time))
 
@@ -171,7 +150,7 @@ dygraph_simple <- function(id){
       dyopt <- function(...){
         dygraphs::dyOptions(dyg, ...)
       }
-      dyg <- do.call(dyopt, dygraph_options)
+      dyg <- do.call(dyopt, rctval[[item_dyopt]])
 
       dyg <- dygraphs::dyAxis(dyg, "x", label = var_time)
       dyg <- dygraphs::dyAxis(dyg, "y", label = paste(var_y1, collapse = ", "))
@@ -184,8 +163,6 @@ dygraph_simple <- function(id){
 
       dyg
     })
-
-#    outputOptions(env$output, id_view_dygraph, suspendWhenHidden = FALSE)
 
   }
 
