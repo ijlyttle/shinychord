@@ -56,21 +56,12 @@ tbldf_read_delim <- function(id){
   # specify timezones
   tz_choice <- c("UTC", lubridate::olson_time_zones())
 
-  # timezone as expressed in file
-  id_controller_tzfile <- id_name("controller", "tzfile")
-  ui_controller$tzfile <-
+  # timezone
+  id_controller_tz <- id_name("controller", "tz")
+  ui_controller$tz <-
     shiny::selectizeInput(
-      inputId = id_controller_tzfile,
-      label = "Timezone in file",
-      choices = tz_choice
-    )
-
-  # timezone at location
-  id_controller_tzloc <- id_name("controller", "tzloc")
-  ui_controller$tzloc <-
-    shiny::selectizeInput(
-      inputId = id_controller_tzloc,
-      label = "Timezone at location",
+      inputId = id_controller_tz,
+      label = "Timezone",
       choices = tz_choice
     )
 
@@ -116,7 +107,7 @@ tbldf_read_delim <- function(id){
         readr::read_delim(
           file = rct_txt(),
           delim = input[[id_controller_delim]],
-          locale = readr::locale(tz = input[[id_controller_tzfile]])
+          locale = readr::locale(tz = input[[id_controller_tz]])
         )
     })
 
@@ -127,16 +118,14 @@ tbldf_read_delim <- function(id){
       renderUI({
 
         shinyjs::disable(id_controller_delim)
-        shinyjs::disable(id_controller_tzfile)
-        shinyjs::disable(id_controller_tzloc)
+        shinyjs::disable(id_controller_tz)
 
         validate(
           need(rct_txt(), "File did not load properly")
         )
 
         shinyjs::enable(id_controller_delim)
-        shinyjs::enable(id_controller_tzfile)
-        shinyjs::enable(id_controller_tzloc)
+        shinyjs::enable(id_controller_tz)
 
         h <- rct_txt()
         h <- readr::read_lines(h, n_max = 11)
