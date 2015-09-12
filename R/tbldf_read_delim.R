@@ -80,7 +80,13 @@ tbldf_read_delim <- function(id){
 
   # shows the first few lines of the parsed data-frame
   id_view_data <- id_name("view", "data")
-  ui_view$data <- shiny::verbatimTextOutput(id_view_data)
+  ui_view$data <-
+    shiny::htmlOutput(
+      outputId = id_view_data,
+      container = function(...){
+        pre(..., style = "white-space: nowrap;")
+      }
+    )
 
   ## server_model ##
   server_model <- function(input, output, session, rctval, item_data){
@@ -137,13 +143,17 @@ tbldf_read_delim <- function(id){
 
     # sets the output for the parsed dataframe
     output[[id_view_data]] <-
-      renderPrint({
+      renderUI({
 
         shiny::validate(
           shiny::need(rctval[[item_data]], "No data")
         )
 
-        print(rctval[[item_data]])
+        h <- capture.output(dplyr::glimpse(rctval[[item_data]]))
+        h <- paste(h, collapse = "<br/>")
+        h <- htmltools::HTML(h)
+
+        h
       })
 
   }
