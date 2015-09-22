@@ -11,13 +11,11 @@ shinyServer(function(input, output, session) {
 
   chord_tbl_1$server_model(
     input, output, session,
-    rctval = rctval_temp,
-    item_data = "a"
+    rctval_data = rctval_temp, item_data = "a"
   )
   chord_tbl_2$server_model(
     input, output, session,
-    rctval = rctval_temp,
-    item_data = "b"
+    rctval_data = rctval_temp, item_data = "b"
   )
 
   observe(print(rctval_temp$a))
