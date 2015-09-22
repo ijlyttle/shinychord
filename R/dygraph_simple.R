@@ -56,17 +56,18 @@ dygraph_simple <- function(id){
   ## server_model ##
   server_model <- function(
     input, output, session,
-    rctval, item_data, item_dyopt
+    rctval_data, item_data,
+    rctval_dyopt = rctval_data, item_dyopt
   ){
 
     # reactives
     rct_data <- reactive({
 
       shiny::validate(
-        shiny::need(rctval[[item_data]], "No data")
+        shiny::need(rctval_data[[item_data]], "No data")
       )
 
-      rctval[[item_data]]
+      rctval_data[[item_data]]
     })
 
     rct_var_time <- reactive({
@@ -126,6 +127,7 @@ dygraph_simple <- function(id){
           selected = selection$Y2
         )
       )
+
     # dygraph
     output[[id_view_dygraph]] <- dygraphs::renderDygraph({
 
@@ -150,7 +152,7 @@ dygraph_simple <- function(id){
       dyopt <- function(...){
         dygraphs::dyOptions(dyg, ...)
       }
-      dyg <- do.call(dyopt, rctval[[item_dyopt]])
+      dyg <- do.call(dyopt, rctval_dyopt[[item_dyopt]])
 
       dyg <- dygraphs::dyAxis(dyg, "x", label = var_time)
       dyg <- dygraphs::dyAxis(dyg, "y", label = paste(var_y1, collapse = ", "))

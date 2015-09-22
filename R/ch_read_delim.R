@@ -1,27 +1,55 @@
 #' ch_read_delim
 #'
-#' Creates a collection of shiny objects to wrapping the \code{readr::read_delim} function.
+#' Creates a collection of shiny objects to wrap the \code{readr::read_delim} function.
 #'
 #' The list will contain:
 #'
 #' \describe{
-#'   \item \code{ui_controller} \code{shiny::taglist} of ui elements for the controller
-#'   \item \code{ui_view} \code{shing::taglist} of ui elements for the view
-#'   \item \code{server_model} a function with reactive code - this function takes a \code{reactiveValues} as its arguement
+#'   \item{\code{ui_controller}}{\code{shiny::taglist} of ui elements for the controller}
+#'   \item{\code{ui_view}}{\code{shing::taglist} of ui elements for the view}
+#'   \item{\code{server_model}}{function with reactive code}
 #' }
 #'
-#' The list returned by the factory has to be available to both the ui and the server. If not using the \code{shinyApp}
-#' formulation, perhaps \code{global.R} could be useful.
+#' The list returned by this function has to be available to both the ui and the server.
+#' If not using the \code{shinyApp} formulation, perhaps \code{global.R} could be useful.
 #'
-#' The component \code{server_model} will be called in the server function, using the
-#' particular \code{reactiveValue} you wish to associate with the "thing".
+#' The list \code{ui_controller} will have members:
+#'
+#' \describe{
+#'  \item{\code{file}}{\code{shiny::fileInput} used to choose the file to upload}
+#'  \item{\code{delim}}{\code{shiny::selectInput} used to select the delimiter character }
+#'  \item{\code{decimal_mark}}{\code{shiny::selectInput used to select the decimal-mark character}}
+#'  \item{\code{tz}}{\code{shiny::selectInput used to select the timezone}}
+#' }
+#'
+#' Note that the `tz` input will serve as an argument to `readr::locale`;
+#' its meaning depends on the context of what it's parsing. See the readr
+#' documentation for more details.
+#'
+#' The list \code{ui_view} will have members:
+#'
+#' \describe{
+#'  \item{\code{text}}{\code{shiny::htmlOutput} showing a preview of the first few lines of the text file}
+#'  \item{\code{data}}{\code{shiny::htmlOutput} showing a glimpse of the parsed dataframe}
+#' }
+#'
+#' The function \code{server_model()} will be called from your server function.
+#' Its arguments are:
+#'
+#' \describe{
+#'  \item{\code{input, output, session}}{input, output, session values passed from your server function}
+#'  \item{\code{rctval_data, item_data}}{
+#'    \code{shiny::reactiveValues} object, character string.
+#'    The parsed dataframe will be placed in \code{rctval_data[[item_data]]}.
+#'  }
+#' }
 #'
 #' @param id    character, tag to prepend to the input and output id's
 #'
-#' @return list containing \code{ui_controller}, \code{ui_view}, and \code{srv_model}
+#' @return list containing \code{ui_controller}, \code{ui_view}, and \code{server_model}
 #' @export
 #'
-tbldf_read_delim <- function(id){
+ch_read_delim <- function(id){
 
   id_name <- function(...){
     paste(list(id, ...), collapse = "_")
@@ -99,7 +127,10 @@ tbldf_read_delim <- function(id){
     )
 
   ## server_model ##
-  server_model <- function(input, output, session, rctval, item_data){
+  server_model <- function(
+    input, output, session,
+    rctval_data, item_data
+  ){
 
     # reactives
 
@@ -119,7 +150,7 @@ tbldf_read_delim <- function(id){
     # observers
 
     observe({
-      rctval[[item_data]] <-
+      rctval_data[[item_data]] <-
         readr::read_delim(
           file = rct_txt(),
           delim = input[[id_controller_delim]],
@@ -161,10 +192,10 @@ tbldf_read_delim <- function(id){
       renderUI({
 
         shiny::validate(
-          shiny::need(rctval[[item_data]], "No data")
+          shiny::need(rctval_data[[item_data]], "No data")
         )
 
-        h <- capture.output(dplyr::glimpse(rctval[[item_data]]))
+        h <- capture.output(dplyr::glimpse(rctval_data[[item_data]]))
         h <- paste(h, collapse = "<br/>")
         h <- htmltools::HTML(h)
 

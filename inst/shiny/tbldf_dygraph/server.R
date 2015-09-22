@@ -24,7 +24,7 @@ shinyServer(function(input, output, session) {
 
   chord_dygraph$server_model(
     input, output, session,
-    rctval = rctval,
+    rctval_data = rctval,
     item_data = "csv",
     item_dyopt = "dyopt"
   )

@@ -2,7 +2,7 @@
 % Please edit documentation in R/tbldf_read_delim.R
 \name{tbldf_read_delim}
 \alias{tbldf_read_delim}
-\title{tbldf_read_delim}
+\title{ch_read_delim}
 \usage{
 tbldf_read_delim(id)
 }
@@ -13,12 +13,12 @@ tbldf_read_delim(id)
 list containing \code{ui_controller}, \code{ui_view}, and \code{srv_model}
 }
 \description{
-Creates a collection of shiny objects to manage the parsing of a delimited file.
+Creates a collection of shiny objects to wrapping the \code{readr::read_delim} function.
 }
 \details{
 The list will contain:
 
-\itemize{
+\describe{
   \item \code{ui_controller} \code{shiny::taglist} of ui elements for the controller
   \item \code{ui_view} \code{shing::taglist} of ui elements for the view
   \item \code{server_model} a function with reactive code - this function takes a \code{reactiveValues} as its arguement
