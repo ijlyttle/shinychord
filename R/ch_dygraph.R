@@ -1,27 +1,53 @@
-#' dygraph_simple
-#'
-#' Creates a list of objects that can be placed in a shiny application
+#' Creates a collection of shiny objects to wrap the \code{readr::read_delim} function.
 #'
 #' The list will contain:
 #'
-#' \itemize{
-#'   \item \code{ui_controller} \code{shiny::taglist} of ui elements for the controller
-#'   \item \code{ui_view} \code{shing::taglist} of ui elements for the view
-#'   \item \code{server_model} a function with reactive code - this function takes a \code{reactiveValues} as its arguement
+#' \describe{
+#'   \item{\code{ui_controller}}{\code{shiny::taglist} of ui elements for the controller}
+#'   \item{\code{ui_view}}{\code{shing::taglist} of ui elements for the view}
+#'   \item{\code{server_model}}{function with reactive code}
 #' }
 #'
-#' The list returned by the factory has to be available to both the ui and the server. If not using the \code{shinyApp}
-#' formulation, perhaps \code{global.R} could be useful.
+#' The list returned by this function has to be available to both the ui and the server.
+#' If not using the \code{shinyApp} formulation, perhaps \code{global.R} could be useful.
 #'
-#' The component \code{server_model} will be called in the server function, using the
-#' particular \code{reactiveValue} you wish to associate with the "thing".
+#' The list \code{ui_controller} will have members:
+#'
+#' \describe{
+#'  \item{\code{time}}{\code{shiny::selectInput} used to choose the variable for the x axis}
+#'  \item{\code{y1}}{\code{shiny::selectInput} used to choose the variable for the y1 axis}
+#'  \item{\code{y2}}{\code{shiny::selectInput} used to choose the variable for the y2 axis}
+#' }
+#'
+#' The list \code{ui_view} will have members:
+#'
+#' \describe{
+#'  \item{\code{dygraph}}{\code{dygraphs::dygraphOutput} showing a preview of the first few lines of the text file}
+#' }
+#'
+#' The function \code{server_model()} will be called from your server function.
+#' Its arguments are:
+#'
+#' \describe{
+#'  \item{\code{input, output, session}}{input, output, session values passed from your server function}
+#'  \item{\code{rctval_data, item_data}}{
+#'    \code{shiny::reactiveValues} object, character string.
+#'    \code{rctval_data[[item_data]]} is expected to be a dataframe, input for dygraph.
+#'  }
+#'  \item{\code{rctval_dyopt, item_dyopt}}{
+#'    \code{shiny::reactiveValues} object, character string.
+#'    The default value for \code{rctval_dyopt} is \code{rctval_dyopt}.
+#'    \code{rctval_data[[item_data]]} is expected to be a list of dygraph options,
+#'    see documentation for \code{dygraphs::dyOptions}
+#'  }
+#' }
 #'
 #' @param id    character, tag to prepend to the input and output id's
 #'
-#' @return list containing \code{ui_controller}, \code{ui_view}, and \code{srv_model}
+#' @return list containing \code{ui_controller}, \code{ui_view}, and \code{server_model}
 #' @export
 #'
-dygraph_simple <- function(id){
+ch_dygraph <- function(id){
 
   id_name <- function(...){
     paste(list(id, ...), collapse = "_")
@@ -148,12 +174,7 @@ dygraph_simple <- function(id){
       dy_xts <- xts::xts(df_num, order.by = vec_time, lubridate::tz(vec_time))
 
       dyg <- dygraphs::dygraph(dy_xts)
-
-      dyopt <- function(...){
-        dygraphs::dyOptions(dyg, ...)
-      }
-      dyg <- do.call(dyopt, rctval_dyopt[[item_dyopt]])
-
+      dyg <- do.call(dygraphs::dyOptions, c(list(dyg), rctval_dyopt[[item_dyopt]]))
       dyg <- dygraphs::dyAxis(dyg, "x", label = var_time)
       dyg <- dygraphs::dyAxis(dyg, "y", label = paste(var_y1, collapse = ", "))
       dyg <- dygraphs::dyAxis(dyg, "y2", label = paste(var_y2, collapse = ", "))

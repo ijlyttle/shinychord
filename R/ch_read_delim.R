@@ -1,5 +1,3 @@
-#' ch_read_delim
-#'
 #' Creates a collection of shiny objects to wrap the \code{readr::read_delim} function.
 #'
 #' The list will contain:
