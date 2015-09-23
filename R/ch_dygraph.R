@@ -1,4 +1,4 @@
-#' Creates a collection of shiny objects to wrap the \code{readr::read_delim} function.
+#' Creates a collection of shiny objects to wrap the part of the dygraphs package.
 #'
 #' The list will contain:
 #'
