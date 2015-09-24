@@ -1,5 +1,7 @@
 #' Creates a list of shiny objects to encapsulate the operation of adding an item to a list.
 #'
+#' Description line
+#'
 #' The list of shiny objects will contain:
 #'
 #' \describe{
@@ -30,13 +32,15 @@
 #' \describe{
 #'  \item{\code{input, output, session}}{input, output, session values passed from your server function}
 #'  \item{\code{rctval_source, item_source}}{
-#'    \code{shiny::reactiveValues} object, character string.
+#'    \code{shiny::reactiveValues} object, character string
+#'
 #'    \code{rctval_source[[item_source]]} an object of some sort to be added to the list.
 #'  }
 #'  \item{\code{rctval_list, item_list}}{
-#'    \code{shiny::reactiveValues} object, character string.
+#'    \code{shiny::reactiveValues} object, character string
+#'
 #'    The default value for \code{rctval_list} is \code{rctval_source}.
-#'    \code{rctval_list[[rctval_list]]} is expected to be a list
+#'    \code{rctval_list[[item_list]]} is expected to be a list, to which the object will be added
 #'  }
 #' }
 #'

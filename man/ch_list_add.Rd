@@ -18,9 +18,11 @@ ch_list_add(id, item = "item", plural = NULL)
 list containing \code{ui_controller}, \code{ui_view}, and \code{server_model}
 }
 \description{
-The list of shiny objects will contain:
+Description line
 }
 \details{
+The list of shiny objects will contain:
+
 \describe{
   \item{\code{ui_controller}}{\code{shiny::taglist} of ui elements for the controller}
   \item{\code{ui_view}}{\code{shing::taglist} of ui elements for the view}
@@ -49,13 +51,15 @@ Its arguments are:
 \describe{
  \item{\code{input, output, session}}{input, output, session values passed from your server function}
  \item{\code{rctval_source, item_source}}{
-   \code{shiny::reactiveValues} object, character string.
-   \code{rctval_source[[item_source]]} an object of some sort to be added to the list.
+   \code{shiny::reactiveValues} object, character string
+
+\code{rctval_source[[item_source]]} an object of some sort to be added to the list.
  }
  \item{\code{rctval_list, item_list}}{
-   \code{shiny::reactiveValues} object, character string.
-   The default value for \code{rctval_list} is \code{rctval_source}.
-   \code{rctval_list[[rctval_list]]} is expected to be a list
+   \code{shiny::reactiveValues} object, character string
+
+The default value for \code{rctval_list} is \code{rctval_source}.
+   \code{rctval_list[[item_list]]} is expected to be a list, to which the object will be added
  }
 }
 }

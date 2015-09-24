@@ -2,8 +2,8 @@
 
 export(ch_dygraph)
 export(ch_list_add)
+export(ch_list_select)
 export(ch_read_delim)
 export(df_names_inherits)
 export(rctval_names)
 export(rctval_remove)
-export(rctval_select)
