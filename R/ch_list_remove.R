@@ -155,7 +155,7 @@ ch_list_remove <- function(id, item = "item", plural = NULL) {
 
         title <-
           ifelse(
-            identical(length(rct_selected()), 1),
+            identical(length(rct_selected()), 1L),
             stringr::str_to_title(item),
             stringr::str_to_title(plural)
           )
