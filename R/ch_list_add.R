@@ -177,9 +177,6 @@ ch_list_add <- function(id, item = "item", plural = NULL) {
         # just for the reactive dependency
         rct_source()
 
-        print(length(rct_name_list()))
-        print(identical(length(rct_name_list()), 0L))
-
         str_list_members <-
           ifelse(
             identical(length(rct_name_list()), 0L),
