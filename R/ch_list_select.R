@@ -1,27 +1,52 @@
-#' rctval_select
+#' Creates a list of shiny objects to encapsulate the operation of
+#' Creates a list of shiny objects to encapsulate the operation of adding an item to a list.
 #'
-#' Creates a list of shiny objects to manage the selection of an item from
-#' a list of reactive values.
+#' The list of shiny objects will contain:
 #'
-#' The returned list will contain:
-#'
-#' \itemize{
-#'   \item \code{ui_controller} \code{shiny::taglist} of ui elements for the controller
-#'   \item \code{ui_view} \code{shing::taglist} of ui elements for the view
-#'   \item \code{server_model} a function with reactive code - this function takes a \code{reactiveValues} as its arguement
+#' \describe{
+#'   \item{\code{ui_controller}}{\code{shiny::taglist} of ui elements for the controller}
+#'   \item{\code{ui_view}}{\code{shing::taglist} of ui elements for the view}
+#'   \item{\code{server_model}}{function with reactive code}
 #' }
 #'
-#' The list returned by the factory has to be available to both the ui and the server. If not using the \code{shinyApp}
-#' formulation, perhaps \code{global.R} could be useful.
+#' The list returned by this function has to be available to both the ui and the server.
+#' If not using the \code{shinyApp} formulation, perhaps \code{global.R} could be useful.
 #'
-#' The component \code{server_model} will be called in the server function, using the
-#' particular \code{reactiveValue} you wish to associate with the "thing".
+#' The list \code{ui_controller} will have members:
 #'
-#' @param id     character, tag to prepend to the input and output id's
-#' @param item   character, name to use instead of "item"
-#' @param plural character, plural name - if NULL (default), just add "s" to item
+#' \describe{
+#'  \item{\code{name}}{\code{shiny::textInput} used to specify the name of the item to be added to the list}
+#'  \item{\code{add}}{\code{shiny::actionButton} used to invoke the action of adding the item to the list}
+#' }
 #'
-#' @return list containing \code{ui_controller}, \code{ui_view}, and \code{srv_model}
+#' The list \code{ui_view} will have members:
+#'
+#' \describe{
+#'  \item{\code{status}}{\code{shiny::verbatimTextOutput} showing if it is possible to add to the list}
+#' }
+#'
+#' The function \code{server_model()} will be called from your server function.
+#' Its arguments are:
+#'
+#' \describe{
+#'  \item{\code{input, output, session}}{input, output, session values passed from your server function}
+#'  \item{\code{rctval_source, item_source}}{
+#'    \code{shiny::reactiveValues} object, character string.
+#'    \code{rctval_source[[item_source]]} an object of some sort to be added to the list.
+#'  }
+#'  \item{\code{rctval_list, item_list}}{
+#'    \code{shiny::reactiveValues} object, character string.
+#'    The default value for \code{rctval_list} is \code{rctval_source}.
+#'    \code{rctval_list[[rctval_list]]} is expected to be a list
+#'  }
+#' }
+#'
+#' @param id      character, tag to prepend to the input and output id's
+#' @param item    character, for the ui, what to call the item being added - default is "item"
+#' @param plural  character, for the ui, what to call the plural of the item being added
+#'                  - default is \code{paste0(item, "s")}
+#'
+#' @return list containing \code{ui_controller}, \code{ui_view}, and \code{server_model}
 #' @export
 #'
 rctval_select <- function(id, item = "item", plural = NULL) {
@@ -41,7 +66,7 @@ rctval_select <- function(id, item = "item", plural = NULL) {
   ## ui_controller ##
   ui_controller <- shiny::tagList()
 
-  # select item to transfer
+  # select item to select
   id_controller_item <- id_name("controller", "item")
   ui_controller$item <- shiny::uiOutput(name_out(id_controller_item))
 

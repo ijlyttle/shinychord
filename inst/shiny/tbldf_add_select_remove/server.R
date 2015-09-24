@@ -17,7 +17,7 @@ shinyServer(function(input, output, session) {
   chord_list_data_add$server_model(
     input, output, session,
     rctval_source = rctval_temp, item_source = "data",
-    item_dest = "list_data"
+    item_list = "list_data"
   )
 
 #   chord_list_tbl_select$server_model(

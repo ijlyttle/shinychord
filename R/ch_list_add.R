@@ -1,6 +1,6 @@
-#' Creates a collection of shiny objects to add an item to a list of items.
+#' Creates a list of shiny objects to encapsulate the operation of adding an item to a list.
 #'
-#' The list will contain:
+#' The list of shiny objects will contain:
 #'
 #' \describe{
 #'   \item{\code{ui_controller}}{\code{shiny::taglist} of ui elements for the controller}
@@ -14,15 +14,14 @@
 #' The list \code{ui_controller} will have members:
 #'
 #' \describe{
-#'  \item{\code{time}}{\code{shiny::selectInput} used to choose the variable for the x axis}
-#'  \item{\code{y1}}{\code{shiny::selectInput} used to choose the variable for the y1 axis}
-#'  \item{\code{y2}}{\code{shiny::selectInput} used to choose the variable for the y2 axis}
+#'  \item{\code{name}}{\code{shiny::textInput} used to specify the name of the item to be added to the list}
+#'  \item{\code{add}}{\code{shiny::actionButton} used to invoke the action of adding the item to the list}
 #' }
 #'
 #' The list \code{ui_view} will have members:
 #'
 #' \describe{
-#'  \item{\code{dygraph}}{\code{dygraphs::dygraphOutput} showing a preview of the first few lines of the text file}
+#'  \item{\code{status}}{\code{shiny::verbatimTextOutput} showing if it is possible to add to the list}
 #' }
 #'
 #' The function \code{server_model()} will be called from your server function.
@@ -30,15 +29,14 @@
 #'
 #' \describe{
 #'  \item{\code{input, output, session}}{input, output, session values passed from your server function}
-#'  \item{\code{rctval_data, item_data}}{
+#'  \item{\code{rctval_source, item_source}}{
 #'    \code{shiny::reactiveValues} object, character string.
-#'    \code{rctval_data[[item_data]]} is expected to be a dataframe, input for dygraph.
+#'    \code{rctval_source[[item_source]]} an object of some sort to be added to the list.
 #'  }
-#'  \item{\code{rctval_dyopt, item_dyopt}}{
+#'  \item{\code{rctval_list, item_list}}{
 #'    \code{shiny::reactiveValues} object, character string.
-#'    The default value for \code{rctval_dyopt} is \code{rctval_dyopt}.
-#'    \code{rctval_data[[item_data]]} is expected to be a list of dygraph options,
-#'    see documentation for \code{dygraphs::dyOptions}
+#'    The default value for \code{rctval_list} is \code{rctval_source}.
+#'    \code{rctval_list[[rctval_list]]} is expected to be a list
 #'  }
 #' }
 #'
@@ -92,7 +90,7 @@ ch_list_add <- function(id, item = "item", plural = NULL) {
   server_model <- function(
     input, output, session,
     rctval_source, item_source,
-    rctval_dest = rctval_source, item_dest
+    rctval_list = rctval_source, item_list
   ){
 
     # reactives
@@ -151,8 +149,8 @@ ch_list_add <- function(id, item = "item", plural = NULL) {
     })
 
     # names in the destination list
-    rct_name_dest <- reactive({
-      names(rctval_dest[[item_dest]])
+    rct_name_list <- reactive({
+      names(rctval_list[[item_list]])
     })
 
 
@@ -160,7 +158,7 @@ ch_list_add <- function(id, item = "item", plural = NULL) {
     observeEvent(
       eventExpr = input[[id_controller_add]],
       handlerExpr = {
-        rctval_dest[[item_dest]][[rct_name_new()]] <- rct_source()
+        rctval_list[[item_list]][[rct_name_new()]] <- rct_source()
       }
     )
 
@@ -173,11 +171,11 @@ ch_list_add <- function(id, item = "item", plural = NULL) {
 
         str_list_members <-
           ifelse(
-            identical(length(rct_name_dest()), 0) | is.null(rct_name_dest()),
+            identical(length(rct_name_list()), 0) | is.null(rct_name_list()),
             paste("List has no", plural, sep = " "),
             paste(
               paste(stringr::str_to_title(plural), "in list", sep = " "),
-              paste(rct_name_dest(), collapse = ", "),
+              paste(rct_name_list(), collapse = ", "),
               sep = ": "
             )
           )

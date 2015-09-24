@@ -2,7 +2,7 @@
 % Please edit documentation in R/ch_list_add.R
 \name{ch_list_add}
 \alias{ch_list_add}
-\title{Creates a collection of shiny objects to add an item to a list of items.}
+\title{Creates a list of shiny objects to encapsulate the operation of adding an item to a list.}
 \usage{
 ch_list_add(id, item = "item", plural = NULL)
 }
@@ -18,7 +18,7 @@ ch_list_add(id, item = "item", plural = NULL)
 list containing \code{ui_controller}, \code{ui_view}, and \code{server_model}
 }
 \description{
-The list will contain:
+The list of shiny objects will contain:
 }
 \details{
 \describe{
@@ -33,15 +33,14 @@ If not using the \code{shinyApp} formulation, perhaps \code{global.R} could be u
 The list \code{ui_controller} will have members:
 
 \describe{
- \item{\code{time}}{\code{shiny::selectInput} used to choose the variable for the x axis}
- \item{\code{y1}}{\code{shiny::selectInput} used to choose the variable for the y1 axis}
- \item{\code{y2}}{\code{shiny::selectInput} used to choose the variable for the y2 axis}
+ \item{\code{name}}{\code{shiny::textInput} used to specify the name of the item to be added to the list}
+ \item{\code{add}}{\code{shiny::actionButton} used to invoke the action of adding the item to the list}
 }
 
 The list \code{ui_view} will have members:
 
 \describe{
- \item{\code{dygraph}}{\code{dygraphs::dygraphOutput} showing a preview of the first few lines of the text file}
+ \item{\code{status}}{\code{shiny::verbatimTextOutput} showing if it is possible to add to the list}
 }
 
 The function \code{server_model()} will be called from your server function.
@@ -49,15 +48,14 @@ Its arguments are:
 
 \describe{
  \item{\code{input, output, session}}{input, output, session values passed from your server function}
- \item{\code{rctval_data, item_data}}{
+ \item{\code{rctval_source, item_source}}{
    \code{shiny::reactiveValues} object, character string.
-   \code{rctval_data[[item_data]]} is expected to be a dataframe, input for dygraph.
+   \code{rctval_source[[item_source]]} an object of some sort to be added to the list.
  }
- \item{\code{rctval_dyopt, item_dyopt}}{
+ \item{\code{rctval_list, item_list}}{
    \code{shiny::reactiveValues} object, character string.
-   The default value for \code{rctval_dyopt} is \code{rctval_dyopt}.
-   \code{rctval_data[[item_data]]} is expected to be a list of dygraph options,
-   see documentation for \code{dygraphs::dyOptions}
+   The default value for \code{rctval_list} is \code{rctval_source}.
+   \code{rctval_list[[rctval_list]]} is expected to be a list
  }
 }
 }
