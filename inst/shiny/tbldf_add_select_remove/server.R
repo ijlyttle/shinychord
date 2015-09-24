@@ -5,30 +5,27 @@ library("dplyr")
 shinyServer(function(input, output, session) {
 
   rctval_temp <- reactiveValues(
-    csv = NULL,
-    select = NULL
+    data = NULL,
+    list_data = NULL
   )
 
-  rctval_data <- reactiveValues()
-
-  chord_tbl$server_model(
+  chord_data$server_model(
     input, output, session,
-    rctval = rctval_temp,
-    item_data = "csv"
+    rctval_data = rctval_temp, item_data = "data"
   )
 
-  chord_list_tbl_add$server_model(
-    rctval_source = rctval_temp,
-    item_source = "csv",
-    rctval_dest = rctval_data
+  chord_list_data_add$server_model(
+    input, output, session,
+    rctval_source = rctval_temp, item_source = "data",
+    item_dest = "list_data"
   )
 
-  chord_list_tbl_select$server_model(
-    rctval_source = rctval_data,
-    rctval_dest = rctval_temp,
-    item_dest = "select"
-  )
-
-  chord_list_tbl_remove$server_model(rctval = rctval_data)
+#   chord_list_tbl_select$server_model(
+#     rctval_source = rctval_data,
+#     rctval_dest = rctval_temp,
+#     item_dest = "select"
+#   )
+#
+#   chord_list_tbl_remove$server_model(rctval = rctval_data)
 
 })
