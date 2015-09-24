@@ -1,6 +1,7 @@
-#' Select an item from a list
+#' Remove items from a list
 #'
-#' Creates a list of shiny objects to encapsulate the operation of selecting an item from a list.
+#' Creates a list of shiny objects to encapsulate the operation of removing an item from a list.
+#'
 #'
 #' The list of shiny objects will contain:
 #'
@@ -16,32 +17,27 @@
 #' The list \code{ui_controller} will have members:
 #'
 #' \describe{
-#'  \item{\code{item}}{\code{shiny::selectInput} used to select the name of the item to be copied from the list}
+#'  \item{\code{item}}{\code{shiny::selectInput} used to select the name of the item(s) to be remove from the list}
+#'  \item{\code{remove}}{\code{shiny::actionButton} used to invoke the action of removing the item from the list}
 #' }
 #'
 #' The list \code{ui_view} will have members:
 #'
 #' \describe{
-#'  \item{\code{status}}{\code{shiny::verbatimTextOutput} showing what has been selected from the list}
+#'   \item{\code{status}}{\code{shiny::verbatimTextOutput} showing what has been selected to be removed from the list}
 #' }
 #'
 #' The function \code{server_model()} will be called from your server function.
 #' Its arguments are:
 #'
 #' \describe{
-#'  \item{\code{input, output, session}}{input, output, session values passed from your server function}
-#'  \item{\code{rctval_list, item_list}}{
-#'    \code{shiny::reactiveValues} object, character string
+#'   \item{\code{input, output, session}}{input, output, session values passed from your server function}
+#'   \item{\code{rctval_list, item_list}}{
+#'     \code{shiny::reactiveValues} object, character string
 #'
-#'    \code{rctval_list[[item_list]]} is expected to be a list,
-#'    from which the selected item will be copied
-#'  }
-#'  \item{\code{rctval_dest, item_dest}}{
-#'    \code{shiny::reactiveValues} object, character string
-#'
-#'    The default value for \code{rctval_dest} is \code{rctval_list}.
-#'    \code{rctval_dest[[item_dest]]} is where the selected item will be copied.
-#'  }
+#'     \code{rctval_list[[item_list]]} is expected to be a list,
+#'     from which the selected item(s) will be removed.
+#'   }
 #' }
 #'
 #' @param id      character, tag to prepend to the input and output id's
@@ -52,7 +48,7 @@
 #' @return list containing \code{ui_controller}, \code{ui_view}, and \code{server_model}
 #' @export
 #'
-ch_list_select <- function(id, item = "item", plural = NULL) {
+ch_list_remove <- function(id, item = "item", plural = NULL) {
 
   id_name <- function(...){
     paste(list(id, ...), collapse = "_")
@@ -69,26 +65,33 @@ ch_list_select <- function(id, item = "item", plural = NULL) {
   ## ui_controller ##
   ui_controller <- shiny::tagList()
 
-  # select item to select
+  # select item(s) to remove
   id_controller_item <- id_name("controller", "item")
   ui_controller$item <- shiny::uiOutput(name_out(id_controller_item))
+
+  # button to remove element
+  id_controller_remove <- id_name("controller", "remove")
+  ui_controller$remove <-
+    actionButton(
+      inputId = id_controller_remove,
+      label = "Remove",
+      class = "btn-danger"
+    )
 
   ## ui_view ##
   ui_view <- shiny::tagList()
 
-  # status of the possibility to add a member
+  # status of the possibility to remove a member
   id_view_status <- id_name("view", "status")
   ui_view$status <- shiny::verbatimTextOutput(id_view_status)
 
   ## server_model ##
   server_model <- function(
     input, output, session,
-    rctval_list, item_list,
-    rctval_dest = rctval_list, item_dest
+    rctval_list, item_list
   ){
 
     # reactives
-
     rct_choices <- reactive({
 
       choices <- names(rctval_list[[item_list]])
@@ -106,62 +109,65 @@ ch_list_select <- function(id, item = "item", plural = NULL) {
 
     rct_selected <- reactive({
 
+      # put this above the "reactive" dependency,
+      # so that the button disables if there are no choices
+      shinyjs::disable(id_controller_remove)
+
       # reactive dependency
       rct_choices()
 
       selected <- input[[id_controller_item]]
 
+      shiny::validate(
+        shiny::need(selected, paste("No", plural, "selected for removal", sep = " "))
+      )
+
+      shinyjs::enable(id_controller_remove)
+
       selected
     })
 
-    # observers
-    shiny::observeEvent(
-      eventExpr = rct_selected(),
+    observeEvent(
+      eventExpr = input[[id_controller_remove]],
       handlerExpr = {
-        rctval_dest[[item_dest]] <- rctval_list[[item_list]][[rct_selected()]]
+        for (name in rct_selected()){
+          rctval_list[[item_list]][[name]] <- NULL
+        }
       }
     )
+
+    observe(print(rct_choices()))
 
     # outputs
     output[[name_out(id_controller_item)]] <-
       shiny::renderUI({
         selectizeInput(
           inputId = id_controller_item,
-          label = paste(stringr::str_to_title(item), "name", sep = " "),
+          label = stringr::str_to_title(plural),
           choices = rct_choices(),
-          selected = rct_selected()
+          selected = NULL,
+          multiple = TRUE
         )
       })
 
     output[[id_view_status]] <-
       shiny::renderText({
 
-        str_message <-
+        title <-
           ifelse(
-            is.null(rct_selected()),
-            paste("No", item, "selected", sep = " "),
-            paste(
-              paste(stringr::str_to_title(item), "selected", sep = " "),
-              rct_selected(),
-              sep = ": "
-            )
+            identical(length(rct_selected()), 1),
+            stringr::str_to_title(item),
+            stringr::str_to_title(plural)
           )
+
+        str_message <- paste(
+          paste(title, "selected for removal", sep = " "),
+          paste(rct_selected(), collapse = ", "),
+          sep = ": "
+        )
 
         str_message
       })
-
-
-    # reactive values - these will hold the variable names for
-    # the time-based and numeric columns of the data-frame
-#     sel <- reactiveValues(
-#       item = NULL
-#     )
-#
-#     observe({
-#       sel$item <- env$input[[id_controller_item]]
-#     })
-
-
 
   }
 

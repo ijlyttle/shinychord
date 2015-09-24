@@ -1,6 +1,6 @@
-#' Creates a list of shiny objects to encapsulate the operation of adding an item to a list.
+#' Add an item to a list
 #'
-#' Description line
+#' Creates a list of shiny objects to encapsulate the operation of adding an item to a list.
 #'
 #' The list of shiny objects will contain:
 #'
@@ -121,13 +121,17 @@ ch_list_add <- function(id, item = "item", plural = NULL) {
     # name to add to desination list
     rct_name_new <- reactive({
 
+      name_new <- input[[id_controller_name]]
+
       # disable the add button
       shinyjs::disable(id_controller_add)
 
       str_message_name <-
         paste(
           paste(
-            paste(stringr::str_to_title(item), "name:", sep = " "),
+            stringr::str_to_title(item),
+            "name:",
+            paste0("\"", name_new, "\""),
             "not valid\n",
             sep = " "
           ),
@@ -149,7 +153,7 @@ ch_list_add <- function(id, item = "item", plural = NULL) {
       # enable the add button
       shinyjs::enable(id_controller_add)
 
-      input[[id_controller_name]]
+      name_new
     })
 
     # names in the destination list
@@ -173,9 +177,12 @@ ch_list_add <- function(id, item = "item", plural = NULL) {
         # just for the reactive dependency
         rct_source()
 
+        print(length(rct_name_list()))
+        print(identical(length(rct_name_list()), 0L))
+
         str_list_members <-
           ifelse(
-            identical(length(rct_name_list()), 0) | is.null(rct_name_list()),
+            identical(length(rct_name_list()), 0L),
             paste("List has no", plural, sep = " "),
             paste(
               paste(stringr::str_to_title(plural), "in list", sep = " "),

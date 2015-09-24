@@ -12,9 +12,9 @@ shinyUI(
         h4("Add"),
         chord_list_data_add$ui_controller,
         h4("Select"),
-        chord_list_data_select$ui_controller#,
-#         h4("Remove"),
-#         chord_list_tbl_remove$ui_controller
+        chord_list_data_select$ui_controller,
+        h4("Remove"),
+        chord_list_data_remove$ui_controller
       ),
       mainPanel(
         h4("CSV Import"),
@@ -22,9 +22,9 @@ shinyUI(
         h4("Add"),
         chord_list_data_add$ui_view,
         h4("Select"),
-        chord_list_data_select$ui_view#,
-#         h4("Remove"),
-#         chord_list_tbl_remove$ui_view
+        chord_list_data_select$ui_view,
+        h4("Remove"),
+        chord_list_data_remove$ui_view
       )
     )
   )

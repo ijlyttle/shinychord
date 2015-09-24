@@ -26,7 +26,10 @@ shinyServer(function(input, output, session) {
     rctval_list = rctval_temp, item_list = "list_data",
     item_dest = "data_select"
   )
-#
-#   chord_list_tbl_remove$server_model(rctval = rctval_data)
+
+  chord_list_data_remove$server_model(
+    input, output, session,
+    rctval_list = rctval_temp, item_list = "list_data"
+  )
 
 })

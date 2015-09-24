@@ -2,7 +2,7 @@
 % Please edit documentation in R/ch_list_add.R
 \name{ch_list_add}
 \alias{ch_list_add}
-\title{Creates a list of shiny objects to encapsulate the operation of adding an item to a list.}
+\title{Add an item to a list}
 \usage{
 ch_list_add(id, item = "item", plural = NULL)
 }
@@ -18,7 +18,7 @@ ch_list_add(id, item = "item", plural = NULL)
 list containing \code{ui_controller}, \code{ui_view}, and \code{server_model}
 }
 \description{
-Description line
+Creates a list of shiny objects to encapsulate the operation of adding an item to a list.
 }
 \details{
 The list of shiny objects will contain:
