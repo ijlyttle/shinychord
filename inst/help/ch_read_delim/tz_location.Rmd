@@ -1,5 +1,0 @@
----
-output: html_fragment
----
-
-Timezones are fraught with peril, locally.

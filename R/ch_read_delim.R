@@ -105,27 +105,29 @@ ch_read_delim <- function(id){
           id = id_controller_tz_file_link,
           "Timezone in file",
           shiny::icon("info-circle")
-        ),
-        shinyBS::bsModal(
-          id = id_controller_tz_file_modal,
-          title = "Timezone in file",
-          trigger = id_controller_tz_file_link,
-          size = "large",
-          htmltools::HTML(
-            readr::read_lines(
-              system.file("help", "ch_read_delim", "tz_file.html", package = "shinychord")
-            )
-          )
         )
       ),
       choices = tz_choice
+    )
+
+  ui_controller$tz_file_modal <-
+    shinyBS::bsModal(
+      id = id_controller_tz_file_modal,
+      title = "Timezones",
+      trigger = id_controller_tz_file_link,
+      size = "large",
+      htmltools::HTML(
+        readr::read_lines(
+          system.file("help", "ch_read_delim", "tz.html", package = "shinychord")
+        )
+      )
     )
 
   # timezone
   id_controller_tz_location <- id_name("controller", "tz_location")
   id_controller_tz_location_link <- id_name("controller", "tz_location", "link")
   id_controller_tz_location_modal <- id_name("controller", "tz_location", "modal")
-  ui_controller$tz_local <-
+  ui_controller$tz_location <-
     shiny::selectizeInput(
       inputId = id_controller_tz_location,
       label = htmltools::tags$span(
@@ -133,22 +135,23 @@ ch_read_delim <- function(id){
           id = id_controller_tz_location_link,
           "Timezone at location",
           shiny::icon("info-circle")
-        ),
-        shinyBS::bsModal(
-          id = id_controller_tz_location_modal,
-          title = "Timezone at location",
-          trigger = id_controller_tz_location_link,
-          size = "large",
-          htmltools::HTML(
-            readr::read_lines(
-              system.file("help", "ch_read_delim", "tz_location.html", package = "shinychord")
-            )
-          )
         )
       ),
       choices = tz_choice
     )
 
+  ui_controller$tz_location_modal <-
+    shinyBS::bsModal(
+      id = id_controller_tz_location_modal,
+      title = "Timezones",
+      trigger = id_controller_tz_location_link,
+      size = "large",
+      htmltools::HTML(
+        readr::read_lines(
+          system.file("help", "ch_read_delim", "tz.html", package = "shinychord")
+        )
+      )
+    )
 
   ## ui_view ##
   ui_view <- shiny::tagList()

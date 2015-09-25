@@ -1,0 +1,13 @@
+---
+output: html_fragment
+---
+
+In order to properly identify and display the instants of time, we have two ways to express the timezone:
+
+- *Timezone in file*: this is ...
+- *Timezone at location*: this is ...
+
+```{r}
+Sys.time()
+```
+
