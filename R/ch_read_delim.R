@@ -218,10 +218,10 @@ ch_read_delim <- function(id){
       rctval_data[[item_data]] <- df
     })
 
-    observeEvent(
+    shiny::observeEvent(
       eventExpr = input[[id_controller_tz_parse]],
       handlerExpr = {
-        updateSelectInput(
+        shiny::updateSelectInput(
           session = session,
           inputId = id_controller_tz_display,
           selected = input[[id_controller_tz_parse]]

@@ -31,10 +31,10 @@ The list \code{ui_controller} will have members:
  \item{\code{file}}{\code{shiny::fileInput} used to choose the file to upload}
  \item{\code{delim}}{\code{shiny::selectInput} used to select the delimiter character }
  \item{\code{decimal_mark}}{\code{shiny::selectInput used to select the decimal-mark character}}
- \item{\code{tz_file}}{\code{shiny::selectInput used to select the timezone used in the file}}
- \item{\code{tz_file_model}}{\code{shinyBS::bsModal used for timezone help}}
- \item{\code{tz_location}}{\code{shiny::selectInput used to select the timezone at the location}}
- \item{\code{tz_location_model}}{\code{shinyBS::bsModal used for timezone help}}
+ \item{\code{tz_parse}}{\code{shiny::selectInput used to select the timezone used to parse}}
+ \item{\code{tz_parse_model}}{\code{shinyBS::bsModal used for timezone help}}
+ \item{\code{tz_display}}{\code{shiny::selectInput used to select the timezone to display}}
+ \item{\code{tz_display_model}}{\code{shinyBS::bsModal used for timezone help}}
 }
 
 Note that the `tz` input will serve as an argument to `readr::locale`;
