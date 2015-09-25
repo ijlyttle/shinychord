@@ -197,7 +197,7 @@ ch_read_delim <- function(id){
     # observers
 
     observe({
-      rctval_data[[item_data]] <-
+      df <-
         readr::read_delim(
           file = rct_txt(),
           delim = input[[id_controller_delim]],
@@ -206,7 +206,23 @@ ch_read_delim <- function(id){
             tz = input[[id_controller_tz_file]]
           )
         )
+
+      df <-
+        rawsCoreSE::df_with_tz(df, tz = input[[id_controller_tz_location]])
+
+      rctval_data[[item_data]] <- df
     })
+
+    observeEvent(
+      eventExpr = input[[id_controller_tz_file]],
+      handlerExpr = {
+        updateSelectInput(
+          session = session,
+          inputId = id_controller_tz_location,
+          selected = input[[id_controller_tz_file]]
+        )
+      }
+    )
 
     # outputs
 

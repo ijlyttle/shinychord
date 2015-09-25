@@ -18,8 +18,8 @@ shinyServer(function(input, output, session) {
     rctval_data = rctval_temp, item_data = "b"
   )
 
-  observe(print(rctval_temp$a))
-  observe(print(rctval_temp$b))
+#  observe(print(rctval_temp$a))
+#  observe(print(rctval_temp$b))
 
 
 })
