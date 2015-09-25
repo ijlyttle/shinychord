@@ -17,10 +17,10 @@
 #'  \item{\code{file}}{\code{shiny::fileInput} used to choose the file to upload}
 #'  \item{\code{delim}}{\code{shiny::selectInput} used to select the delimiter character }
 #'  \item{\code{decimal_mark}}{\code{shiny::selectInput used to select the decimal-mark character}}
-#'  \item{\code{tz_file}}{\code{shiny::selectInput used to select the timezone used in the file}}
-#'  \item{\code{tz_file_model}}{\code{shinyBS::bsModal used for timezone help}}
-#'  \item{\code{tz_location}}{\code{shiny::selectInput used to select the timezone at the location}}
-#'  \item{\code{tz_location_model}}{\code{shinyBS::bsModal used for timezone help}}
+#'  \item{\code{tz_parse}}{\code{shiny::selectInput used to select the timezone used to parse}}
+#'  \item{\code{tz_parse_model}}{\code{shinyBS::bsModal used for timezone help}}
+#'  \item{\code{tz_display}}{\code{shiny::selectInput used to select the timezone to display}}
+#'  \item{\code{tz_display_model}}{\code{shinyBS::bsModal used for timezone help}}
 #' }
 #'
 #' Note that the `tz` input will serve as an argument to `readr::locale`;
@@ -96,27 +96,27 @@ ch_read_delim <- function(id){
   tz_choice <- c("UTC", lubridate::olson_time_zones())
 
   # timezone file
-  id_controller_tz_file <- id_name("controller", "tz_file")
-  id_controller_tz_file_link <- id_name("controller", "tz_file", "link")
-  id_controller_tz_file_modal <- id_name("controller", "tz_file", "modal")
-  ui_controller$tz_file <-
+  id_controller_tz_parse <- id_name("controller", "tz_parse")
+  id_controller_tz_parse_link <- id_name("controller", "tz_parse", "link")
+  id_controller_tz_parse_modal <- id_name("controller", "tz_parse", "modal")
+  ui_controller$tz_parse <-
     shiny::selectizeInput(
-      inputId = id_controller_tz_file,
+      inputId = id_controller_tz_parse,
       label = htmltools::tags$span(
         htmltools::tags$a(
-          id = id_controller_tz_file_link,
-          "Timezone in file",
+          id = id_controller_tz_parse_link,
+          "Timezone to parse",
           shiny::icon("info-circle")
         )
       ),
       choices = tz_choice
     )
 
-  ui_controller$tz_file_modal <-
+  ui_controller$tz_parse_modal <-
     shinyBS::bsModal(
-      id = id_controller_tz_file_modal,
+      id = id_controller_tz_parse_modal,
       title = "Timezones",
-      trigger = id_controller_tz_file_link,
+      trigger = id_controller_tz_parse_link,
       size = "large",
       htmltools::HTML(
         readr::read_lines(
@@ -126,27 +126,27 @@ ch_read_delim <- function(id){
     )
 
   # timezone
-  id_controller_tz_location <- id_name("controller", "tz_location")
-  id_controller_tz_location_link <- id_name("controller", "tz_location", "link")
-  id_controller_tz_location_modal <- id_name("controller", "tz_location", "modal")
-  ui_controller$tz_location <-
+  id_controller_tz_display <- id_name("controller", "tz_display")
+  id_controller_tz_display_link <- id_name("controller", "tz_display", "link")
+  id_controller_tz_display_modal <- id_name("controller", "tz_display", "modal")
+  ui_controller$tz_display <-
     shiny::selectizeInput(
-      inputId = id_controller_tz_location,
+      inputId = id_controller_tz_display,
       label = htmltools::tags$span(
         htmltools::tags$a(
-          id = id_controller_tz_location_link,
-          "Timezone at location",
+          id = id_controller_tz_display_link,
+          "Timezone to display",
           shiny::icon("info-circle")
         )
       ),
       choices = tz_choice
     )
 
-  ui_controller$tz_location_modal <-
+  ui_controller$tz_display_modal <-
     shinyBS::bsModal(
-      id = id_controller_tz_location_modal,
+      id = id_controller_tz_display_modal,
       title = "Timezones",
-      trigger = id_controller_tz_location_link,
+      trigger = id_controller_tz_display_link,
       size = "large",
       htmltools::HTML(
         readr::read_lines(
@@ -208,23 +208,23 @@ ch_read_delim <- function(id){
           delim = input[[id_controller_delim]],
           locale = readr::locale(
             decimal_mark = input[[id_controller_decimal_mark]],
-            tz = input[[id_controller_tz_file]]
+            tz = input[[id_controller_tz_parse]]
           )
         )
 
       df <-
-        rawsCoreSE::df_with_tz(df, tz = input[[id_controller_tz_location]])
+        rawsCoreSE::df_with_tz(df, tz = input[[id_controller_tz_display]])
 
       rctval_data[[item_data]] <- df
     })
 
     observeEvent(
-      eventExpr = input[[id_controller_tz_file]],
+      eventExpr = input[[id_controller_tz_parse]],
       handlerExpr = {
         updateSelectInput(
           session = session,
-          inputId = id_controller_tz_location,
-          selected = input[[id_controller_tz_file]]
+          inputId = id_controller_tz_display,
+          selected = input[[id_controller_tz_parse]]
         )
       }
     )
@@ -237,8 +237,8 @@ ch_read_delim <- function(id){
 
         shinyjs::disable(id_controller_delim)
         shinyjs::disable(id_controller_decimal_mark)
-        shinyjs::disable(id_controller_tz_file)
-        shinyjs::disable(id_controller_tz_location)
+        shinyjs::disable(id_controller_tz_parse)
+        shinyjs::disable(id_controller_tz_display)
 
         validate(
           need(rct_txt(), "File did not load properly")
@@ -246,8 +246,8 @@ ch_read_delim <- function(id){
 
         shinyjs::enable(id_controller_delim)
         shinyjs::enable(id_controller_decimal_mark)
-        shinyjs::enable(id_controller_tz_file)
-        shinyjs::enable(id_controller_tz_location)
+        shinyjs::enable(id_controller_tz_parse)
+        shinyjs::enable(id_controller_tz_display)
 
         h <- rct_txt()
         h <- readr::read_lines(h, n_max = 11)
