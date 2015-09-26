@@ -27,11 +27,16 @@ Let's say we wanted a shinychord to upload and parse a delimited file. We start 
 ```R
 ch_upload_parse <- function(id){
 
+  # controller
   ui_controller <- shiny::tagList()
 
+  # view
   ui_view <- shiny::tagList()
 
-  server_model <- function(...){
+  # model
+  server_model <- function(
+    input, output, session
+  ){
   
   }
   
@@ -43,7 +48,7 @@ ch_upload_parse <- function(id){
 }
 ```
 
-Over the next few sections, show how the parts of the template are filled out so that we end with a complete shinychord.
+Over the next few sections, we show how the parts of the template are filled out so that we end with a complete shinychord.
 
 ### Naming function
 
@@ -109,20 +114,18 @@ ui_view$data <- shiny::verbatimTextOutput(id_view_data)
 
 ### Model
 
-
 A couple of notes here:
-
-- We use the variable `env` to refer to the `parent.frame()`. This is because we will refer to `env$input` rather than `input` - the `input` and `output` variables are a part of the environment from which this function is called. 
 
 - Whenever we refer to a reactive value, we have to wrap it in a reactive expression.
 
 - For this shinychord, the ultimate goal is to encapsulate the details so that we expose an `id`, when we create the shinychord, and a reactive value, when we place the `server_model()` function in the shiny `server()` function. We have to pass to this `server_model()` function the reactive value and the name of the item within the reactive value. It will be in this reactive value that the parsed dataframe will be placed.
 
 ```R
-server_model <- function(rctval, item){
+server_model <- function(
+  input, output, session,
+  rctval_data, item_data
+){
 
-  env <- parent.frame()
- 
   ## reactives
 
   # reactive to read in the raw text from the file-specification input
@@ -132,7 +135,7 @@ server_model <- function(rctval, item){
       shiny::need(env$input[[id_controller_file]], "File not selected")
     )
 
-    infile <- env$input[[id_controller_file]]$datapath
+    infile <- input[[id_controller_file]]$datapath
 
     readr::read_file(infile)
   })
@@ -141,17 +144,17 @@ server_model <- function(rctval, item){
 
   # this needs to be wrapped in a reactive expression
   observe({
-    rctval[[item]] <-
+    rctval_data[[item_data]] <-
       readr::read_delim(
         file = rct_txt(),
-        delim = env$input[[id_controller_delim]]
+        delim = input[[id_controller_delim]]
       )
   })
 
   ## outputs
 
   # sets the output for the raw text
-  env$output[[id_view_text]] <-
+  output[[id_view_text]] <-
     renderText({
       
       shiny::validate(
@@ -166,16 +169,15 @@ server_model <- function(rctval, item){
 
 
   # sets the output for the parsed dataframe
-  env$output[[id_view_data]] <-
+  output[[id_view_data]] <-
     renderPrint({
       
       shiny::validate(
-        shiny::need(rctval[[item]], "No data")
+        shiny::need(rctval_data[[item_data]], "No data")
       )
       
-      dplyr::glimpse(rctval[[item]])
+      dplyr::glimpse(rctval_data[[item_data]])
     })
-
 
 }
 ```
@@ -191,6 +193,7 @@ ch_upload_parse <- function(id){
     paste(list(id, ...), collapse = "_")
   }
 
+  # controller
   ui_controller <- shiny::tagList()
 
   id_controller_file <- id_name("controller", "file")
@@ -210,6 +213,7 @@ ch_upload_parse <- function(id){
       selected = ";"
     )
   
+  # view
   ui_view <- shiny::tagList()
   
   # shows the raw text of the file (first few lines)
@@ -220,65 +224,66 @@ ch_upload_parse <- function(id){
   id_view_data <- id_name("view", "data")
   ui_view$data <- shiny::verbatimTextOutput(id_view_data)
   
-  server_model <- function(rctval, item){
-  
-    env <- parent.frame()
-   
-    ## reactives
-  
-    # reactive to read in the raw text from the file-specification input
-    rct_txt <- reactive({
-  
-      shiny::validate(
-        shiny::need(env$input[[id_controller_file]], "File not selected")
-      )
-  
-      infile <- env$input[[id_controller_file]]$datapath
-  
-      readr::read_file(infile)
-    })
-  
-    ## observers
-  
-    # this needs to be wrapped in a reactive expression
-    observe({
-      rctval[[item]] <-
-        readr::read_delim(
-          file = rct_txt(),
-          delim = env$input[[id_controller_delim]]
-        )
-    })
-  
-    ## outputs
-  
-    # sets the output for the raw text
-    env$output[[id_view_text]] <-
-      renderText({
-        
-        shiny::validate(
-          shiny::need(rct_txt(), "File did not load properly")
-        )
-        
-        h <- rct_txt()
-        h <- readr::read_lines(h, n_max = 10)
-        
-        paste(h, collapse = "\n")
-      })
-  
-    # sets the output for the parsed dataframe
-    env$output[[id_view_data]] <-
-      renderPrint({
-        
-        shiny::validate(
-          shiny::need(rctval[[item]], "No data")
-        )
-        
-        dplyr::glimpse(rctval[[item]])
-      })
+  # model
+server_model <- function(
+  input, output, session,
+  rctval_data, item_data
+){
 
-  
-  }
-  
+  ## reactives
+
+  # reactive to read in the raw text from the file-specification input
+  rct_txt <- reactive({
+
+    shiny::validate(
+      shiny::need(input[[id_controller_file]], "File not selected")
+    )
+
+    infile <- input[[id_controller_file]]$datapath
+
+    readr::read_file(infile)
+  })
+
+  ## observers
+
+  # this needs to be wrapped in a reactive expression
+  observe({
+    rctval_data[[item_data]] <-
+      readr::read_delim(
+        file = rct_txt(),
+        delim = input[[id_controller_delim]]
+      )
+  })
+
+  ## outputs
+
+  # sets the output for the raw text
+  output[[id_view_text]] <-
+    renderText({
+      
+      shiny::validate(
+        shiny::need(rct_txt(), "File did not load properly")
+      )
+      
+      h <- rct_txt()
+      h <- readr::read_lines(h, n_max = 10)
+      
+      paste(h, collapse = "\n")
+    })
+
+
+  # sets the output for the parsed dataframe
+  output[[id_view_data]] <-
+    renderPrint({
+      
+      shiny::validate(
+        shiny::need(rctval_data[[item_data]], "No data")
+      )
+      
+      dplyr::glimpse(rctval_data[[item_data]])
+    })
+
+}  
   list(
     ui_controller = ui_controller,
     ui_view = ui_view,
@@ -298,8 +303,9 @@ The shinychord function can be created once and used everywhere.
 ```R
 library("shiny")
 library("readr")
+library("dplyr")
 
-chord_parse <- ch_upload_parse("parse_1")
+chord_parse <- ch_upload_parse("parse")
 
 shinyApp(
 
@@ -312,9 +318,15 @@ shinyApp(
   
   server = function(input, output, session){
   
-    rctval_data <- reactiveValues(parse = NULL)
+    rctval <- reactiveValues(data_csv = NULL)
     
-    chord_parse$server_model(rctval_data, "parse")
+    chord_parse$server_model(
+      input, output, session,
+      rctval_data = rctval, item_data = "data_csv"
+    )
+    
+    observe(print(rctval$data_csv))
+    
   }
   
 )
