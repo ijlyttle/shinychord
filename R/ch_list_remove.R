@@ -136,8 +136,6 @@ ch_list_remove <- function(id, item = "item", plural = NULL) {
       }
     )
 
-    observe(print(rct_choices()))
-
     # outputs
     output[[name_out(id_controller_item)]] <-
       shiny::renderUI({
