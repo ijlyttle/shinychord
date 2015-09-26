@@ -1,3 +1,20 @@
+#' Closure for file-downloading
+#'
+#' A closure to provide a function to download a file,
+#' by copying it from the specified place. Useful for
+#' \code{shiny::downloadHandler()}.
+#'
+#' @param file_source  character describing path to file to be copied
+#'
+#' @return function
+#' @export
+#'
+cl_file_copy <- function(file_source){
+
+  function(file){
+    file.copy(from = file_source, to = file)
+  }
+}
 
 
 
