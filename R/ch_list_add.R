@@ -121,10 +121,14 @@ ch_list_add <- function(id, item = "item", plural = NULL) {
     # name to add to desination list
     rct_name_new <- reactive({
 
-      name_new <- input[[id_controller_name]]
-
       # disable the add button
       shinyjs::disable(id_controller_add)
+
+      # put in a reactive dependency
+      # to keep the add button from disabling
+      rct_source()
+
+      name_new <- input[[id_controller_name]]
 
       str_message_name <-
         paste(
