@@ -48,7 +48,6 @@ template <- function(id){
   ## ui_controller ##
   ui_controller <- shiny::tagList()
 
-
   ## ui_view ##
   ui_view <- shiny::tagList()
 
@@ -65,9 +64,7 @@ template <- function(id){
 
     # outputs
 
-    env$output[[id_view_status]] <- shiny::renderPrint({
-      cat("hello world")
-    })
+    output[[id_view_status]] <- shiny::renderText("hello world")
 
   }
 
