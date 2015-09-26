@@ -2,7 +2,8 @@
 % Please edit documentation in R/utils.R
 \name{df_names_inherits}
 \alias{df_names_inherits}
-\title{df_names_inherits}
+\title{Get the names of all the columns of the dataframe
+that inherit from the supplied class name}
 \usage{
 df_names_inherits(df, what)
 }
@@ -15,7 +16,7 @@ df_names_inherits(df, what)
 character vector
 }
 \description{
-get the names of all the columns of the dataframe
+Get the names of all the columns of the dataframe
 that inherit from the supplied class name
 }
 
