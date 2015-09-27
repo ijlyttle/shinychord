@@ -66,7 +66,7 @@ ch_dygraph <- function(id){
 
   # Y1 axes
   id_controller_y1 <- id_name("controller", "y1")
-  ui_controller$y1 <- shinyjs::disabled(shiny::uiOutput(name_out(id_controller_y1)))
+  ui_controller$y1 <- shiny::uiOutput(name_out(id_controller_y1))
 
   # Y2 axes
   id_controller_y2 <- id_name("controller", "y2")
