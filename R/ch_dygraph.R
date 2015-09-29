@@ -160,16 +160,15 @@ ch_dygraph <- function(id){
       var_time <- selection$time
       var_y1 <- selection$Y1
       var_y2 <- selection$Y2
-      var_yall <- c(var_y1, var_y2)
 
       shiny::validate(
         shiny::need(var_time, "No time-variable"),
-        shiny::need(var_yall, "No y-variables")
+        shiny::need(c(var_y1, var_y2), "No y-variables")
       )
 
       # create the mts object
       vec_time <- rct_data()[[var_time]]
-      df_num <- rct_data()[, var_yall]
+      df_num <- rct_data()[, c(var_y1, var_y2)]
 
       dy_xts <- xts::xts(df_num, order.by = vec_time, lubridate::tz(vec_time))
 
