@@ -158,14 +158,20 @@ ch_read_delim <- function(id){
   ## ui_view ##
   ui_view <- shiny::tagList()
 
+  # http://stackoverflow.com/questions/10374171/how-to-make-twitter-bootstraps-pre-blocks-scroll-horizontally
+  fn_container <- function(...){
+    htmltools::pre(
+      ...,
+      style = "overflow: auto; word-wrap: normal; white-space: pre;"
+    )
+  }
+
   # shows the raw text of the file (first few lines)
   id_view_text <- id_name("view", "text")
   ui_view$text <-
     shiny::htmlOutput(
       outputId = id_view_text,
-      container = function(...){
-        pre(..., style = "white-space: nowrap;")
-      }
+      container = fn_container
     )
 
   # shows the first few lines of the parsed data-frame
@@ -173,9 +179,7 @@ ch_read_delim <- function(id){
   ui_view$data <-
     shiny::htmlOutput(
       outputId = id_view_data,
-      container = function(...){
-        pre(..., style = "white-space: nowrap;")
-      }
+      container = fn_container
     )
 
   ## server_model ##
@@ -250,7 +254,7 @@ ch_read_delim <- function(id){
         shinyjs::enable(id_controller_tz_display)
 
         h <- rct_txt()
-        h <- readr::read_lines(h, n_max = 11)
+        h <- readr::read_lines(h, n_max = 7)
         h <- paste(h, collapse = "<br/>")
         h <- htmltools::HTML(h)
 
@@ -265,7 +269,7 @@ ch_read_delim <- function(id){
           shiny::need(rctval_data[[item_data]], "No data")
         )
 
-        h <- capture.output(dplyr::glimpse(rctval_data[[item_data]]))
+        h <- capture.output(print(rctval_data[[item_data]], n = 6, width = 10000))
         h <- paste(h, collapse = "<br/>")
         h <- htmltools::HTML(h)
 
