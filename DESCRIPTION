@@ -14,12 +14,13 @@ Imports:
   shiny (>= 0.12.1),
   shinyjs (>= 0.0.8.3),
   shinyBS (>= 0.61),
-  readr (>= 0.1.1.9),
+  readr (>= 0.1.1.9000),
   dplyr,
   htmltools,
   lubridate,
   stringr
 Suggests:
   dygraphs,
-  xts,
-  xformplus
+  xts
+Remotes:
+  hadley/readr
