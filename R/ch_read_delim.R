@@ -45,12 +45,13 @@
 #'  }
 #' }
 #'
-#' @param id    character, tag to prepend to the input and output id's
+#' @param id        character, tag to prepend to the input and output id's
+#' @param defaults  list, default values for delimiter and decimal_mark
 #'
 #' @return list containing \code{ui_controller}, \code{ui_view}, and \code{server_model}
 #' @export
 #'
-ch_read_delim <- function(id){
+ch_read_delim <- function(id, defaults = list(delim = ",", decimal_mark = ".")){
 
   id_name <- function(...){
     paste(list(id, ...), collapse = "_")
@@ -79,7 +80,7 @@ ch_read_delim <- function(id){
       inputId = id_controller_delim,
       label = "Delimiter",
       choices = c(Comma = ",", Semicolon = ";", Tab = "\t"),
-      selected = ";"
+      selected = defaults$delim
     )
 
   # specify decimal
@@ -89,7 +90,7 @@ ch_read_delim <- function(id){
       inputId = id_controller_decimal_mark,
       label = "Decimal mark",
       choices = c(Point = ".", Comma = ","),
-      selected = "."
+      selected = defaults$decimal_mark
     )
 
   # specify timezones
@@ -202,10 +203,8 @@ ch_read_delim <- function(id){
       readr::read_file(infile)
     })
 
+    rct_data <- reactive({
 
-    # observers
-
-    observe({
       df <-
         readr::read_delim(
           file = rct_txt(),
@@ -219,9 +218,15 @@ ch_read_delim <- function(id){
       df <-
         rawsCoreSE::df_with_tz(df, tz = input[[id_controller_tz_display]])
 
-      rctval_data[[item_data]] <- df
+      shiny::validate(
+        shiny::need(is.data.frame(df), "No data")
+      )
+
+      df
     })
 
+
+    # observers
     shiny::observeEvent(
       eventExpr = input[[id_controller_tz_parse]],
       handlerExpr = {
@@ -232,6 +237,10 @@ ch_read_delim <- function(id){
         )
       }
     )
+
+    shiny::observe({
+      rctval_data[[item_data]] <- rct_data()
+    })
 
     # outputs
 
@@ -244,8 +253,8 @@ ch_read_delim <- function(id){
         shinyjs::disable(id_controller_tz_parse)
         shinyjs::disable(id_controller_tz_display)
 
-        validate(
-          need(rct_txt(), "File did not load properly")
+        shiny::validate(
+          shiny::need(rct_txt(), "File did not load properly")
         )
 
         shinyjs::enable(id_controller_delim)
@@ -265,11 +274,11 @@ ch_read_delim <- function(id){
     output[[id_view_data]] <-
       renderUI({
 
-        shiny::validate(
-          shiny::need(rctval_data[[item_data]], "No data")
-        )
-
-        h <- capture.output(print(rctval_data[[item_data]], n = 6, width = 10000))
+        h <-
+          devtools::with_options(
+            list(width = 10000, dpylr.width = Inf, dplyr.print_min = 6),
+            capture.output(print(rct_data()))
+          )
         h <- paste(h, collapse = "<br/>")
         h <- htmltools::HTML(h)
 

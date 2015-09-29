@@ -45,7 +45,7 @@ template <- function(id){
     paste(x, ".out.", sep = "_")
   }
 
-  ## ui_controller ##
+  ## ui_controller
   ui_controller <- shiny::tagList()
 
   ## ui_view ##
