@@ -1,0 +1,29 @@
+---
+title: "Ames Weather - rWunderground"
+author: "Ian Lyttle"
+date: "September 29, 2015"
+output: html_document
+---
+
+```{r library}
+library("rwunderground")
+library("lubridate")
+library("readr")
+library("shinychord")
+```
+
+```{r directory}
+dir_read <- file.path("..", "inst", "extdata")
+```
+
+```{r wx_read}
+wx_ames <-
+  read_csv(
+    file = file.path(dir_read, "wx_ames.csv"),
+    locale = locale(tz = "America/Chicago")
+  )
+```
+
+```{r}
+devtools::use_data(wx_ames)
+```

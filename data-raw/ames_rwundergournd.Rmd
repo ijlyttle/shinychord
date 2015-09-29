@@ -17,7 +17,7 @@ dir_write <- file.path("..", "inst", "extdata")
 
 ```{r dates}
 date_start <- as.Date(ymd("2014-01-01"))
-date_end <- as.Date(ymd("2014-12-31"))
+date_end <- as.Date(ymd("2014-01-31"))
 
 fmt <- stamp_date("20140325")
 ```
@@ -35,7 +35,7 @@ wx_all <- history_range(
 ```{r wx_write}
 write_csv(
   wx_all,
-  path = file.path(dir_write, "wx_ames_2014.csv")
+  path = file.path(dir_write, "wx_ames.csv")
 )
 ```
 
