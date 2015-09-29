@@ -37,7 +37,5 @@ shinyApp(
       rctval_data = rctval, item_data = "data",
       item_dyopt = "dyopt"
     )
-
   }
-
 )
