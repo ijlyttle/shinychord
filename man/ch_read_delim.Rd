@@ -4,10 +4,12 @@
 \alias{ch_read_delim}
 \title{Creates a collection of shiny objects to wrap the \code{readr::read_delim} function.}
 \usage{
-ch_read_delim(id)
+ch_read_delim(id, defaults = list(delim = ",", decimal_mark = "."))
 }
 \arguments{
 \item{id}{character, tag to prepend to the input and output id's}
+
+\item{defaults}{list, default values for delimiter and decimal_mark}
 }
 \value{
 list containing \code{ui_controller}, \code{ui_view}, and \code{server_model}

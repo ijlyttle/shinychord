@@ -151,7 +151,7 @@ ch_list_add <- function(id, item = "item", plural = NULL) {
       }
 
       shiny::validate(
-        shiny::need(is_name_valid(input[[id_controller_name]]), str_message_name)
+        shiny::need(is_name_valid(name_new), str_message_name)
       )
 
       # enable the add button
