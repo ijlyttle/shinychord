@@ -35,3 +35,30 @@ df_names_inherits <- function(df, what){
 
   names_class
 }
+
+
+#' Sets the timezone of all time-based columns in a dataframe
+#'
+#' @param df  dataframe
+#' @param tz  timezone, an Olson timezone or "UTC" (default)
+#'
+#' @return dataframe
+#'
+#' @examples
+#' df_with_tz(coltypes_sample, tz = "America/Chicago")
+#'
+#' @export
+#'
+df_with_tz <- function(df, tz = "UTC"){
+
+  is_datetime <- vapply(df, inherits, logical(1), "POSIXct")
+
+  fn_set_tz <- function(x){
+    attr(x, "tzone") <- tz
+    x
+  }
+
+  df[is_datetime] <- lapply(df[is_datetime], fn_set_tz)
+
+  df
+}

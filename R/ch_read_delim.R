@@ -215,8 +215,7 @@ ch_read_delim <- function(id, defaults = list(delim = ",", decimal_mark = ".")){
           )
         )
 
-      df <-
-        rawsCoreSE::df_with_tz(df, tz = input[[id_controller_tz_display]])
+      df <- df_with_tz(df, tz = input[[id_controller_tz_display]])
 
       shiny::validate(
         shiny::need(is.data.frame(df), "No data")
