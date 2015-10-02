@@ -10,6 +10,10 @@ This might be useful for shiny code where:
 We give a way to help ensure unique id's for each of the input and output elements.
 We give a way to expose only a few reactive values.
 
+## tl;dr
+
+[PDF of a presentation](https://github.com/ijlyttle/shinychord/tree/master/inst/doc) made to the ISU Statistics Graphics Group - 2015-10-01.
+
 ## Structure of a shinychord
 
 A shinychord is simply a function that takes `id` as its argument. It returns a list with three items:
