@@ -19,8 +19,7 @@ Imports:
   devtools,
   htmltools,
   lubridate,
-  stringr
-Suggests:
+  stringr,
   dygraphs,
   xts
 
