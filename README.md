@@ -12,7 +12,7 @@ We give a way to expose only a few reactive values.
 
 ## tl;dr
 
-[PDF of a presentation](https://github.com/ijlyttle/shinychord/tree/master/inst/doc) made to the ISU Statistics Graphics Group - 2015-10-01.
+[PDF of a presentation](https://ijlyttle.github.io/shinychord/doc/isu_presentation.pdf) made to the ISU Statistics Graphics Group - 2015-10-01.
 
 ## Structure of a shinychord
 
