@@ -1,5 +1,8 @@
 library("shiny")
 library("shinychord")
+library("shinyjs")
+library("shinyBS")
+library("dplyr")
 
 chord_readr <- ch_read_delim(id = "readr")
 chord_dygraph <- ch_dygraph(id = "dyg")
@@ -7,6 +10,7 @@ chord_dygraph <- ch_dygraph(id = "dyg")
 shinyApp(
 
   ui = fluidPage(
+    useShinyjs(),
     titlePanel("readr & dygraph demo"),
     sidebarLayout(
       sidebarPanel(
@@ -35,7 +39,7 @@ shinyApp(
     chord_dygraph$server_model(
       input, output, session,
       rctval_data = rctval, item_data = "data",
-      item_dyopt = "dyopt"
+      rctval_dyopt= rctval, item_dyopt = "dyopt"
     )
   }
 )
