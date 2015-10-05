@@ -43,7 +43,7 @@ There are two steps to processing text-based timestamps:
 1. Determining the instants in time to which the timestamps refer.
 2. Displaying those instants in time the way that you wish.
 
-Let's say your friend tells you that when she saw peak of the ["blood moon" eclipse](http://news.nationalgeographic.com/2015/09/150924-super-total-lunar-eclipse-moon-sky-watching-viewing/), the clock read:
+Let's say your friend tells you that when she saw the peak of the ["blood moon" eclipse](http://news.nationalgeographic.com/2015/09/150924-super-total-lunar-eclipse-moon-sky-watching-viewing/), the clock read:
 
 ```{r}
 str_time %>% cat()
