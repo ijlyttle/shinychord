@@ -1,18 +1,22 @@
 # shinychord
 
-The puropse of this package is to propose a convention for resuable shiny modules.
+The purpose of this package is to propose a convention for reusable shiny modules.
 
 This might be useful for shiny code where:
 
-- there are a lot of controls that are importatnt only within the module.
-- there is a need to use the module in different apps.
+- things can be broken down into modules
+- within each module, the are a lot of controls are important only within the module
+- there may be a need to use modules in different apps
 
-We give a way to help ensure unique id's for each of the input and output elements.
-We give a way to expose only a few reactive values.
+One benefit is that the server logic for a given module is encapsulated, while exposing only a few reactive values and the ui elements.
 
 ## tl;dr
 
-[PDF of a presentation](https://ijlyttle.github.io/shinychord/doc/isu_presentation.pdf) made to the ISU Statistics Graphics Group - 2015-10-01.
+- [PDF of a presentation](https://ijlyttle.github.io/shinychord/doc/isu_presentation.pdf) made to the ISU Statistics Graphics Group - 2015-10-01. Revised 2015-10-05.
+
+- [Demonstration app](https://ijlyttle.shinyapps.io/shinychord_dygraphs), showing a [dygraph](https://rstudio.github.io/dygraphs/) shinychord in a shiny-app.
+
+- [Demonstration app](https://ijlyttle.shinyapps.io/shinychord_readr_dygraphs), showing a [csv-parser](https://github.com/hadley/readr) shinychord and a [dygraph](https://rstudio.github.io/dygraphs/) shinychord in a shiny app.
 
 ## Structure of a shinychord
 
@@ -56,7 +60,7 @@ Over the next few sections, we show how the parts of the template are filled out
 
 ### Naming function
 
-One of the challenges we have in composing shiny applications is a way to keep the names unique amomg each of the elements.
+One of the challenges we have in composing shiny applications is a way to keep the names unique among each of the elements.
 
 To help us, I put a function at the top of the shinychord:
 
