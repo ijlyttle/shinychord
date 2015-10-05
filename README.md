@@ -24,9 +24,11 @@ A shinychord is simply a function that takes `id` as its argument. It returns a 
 
 - `ui_controller` a `shiny::tagList` containing ui elements focusing on inputs
 - `ui_view` a `shiny::tagList` containing ui elements focusing on outputs
-- `server_model` a function that contains all the server logic
+- `server_model` a function that contains all the server logic, and exposes reactive values
 
 As you might imagine, the names on this list are inspired by the model-view-controller paradigm.
+
+There is nothing mandatory or scared about the names of these elements, it is only a proposed convention. Furthermore, the elements of each `shiny::taglist` are available if you want to select or arrange them differently.
 
 ## Example
 
