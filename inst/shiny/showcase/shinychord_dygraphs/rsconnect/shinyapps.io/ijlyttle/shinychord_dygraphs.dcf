@@ -2,6 +2,6 @@ name: shinychord_dygraphs
 account: ijlyttle
 server: shinyapps.io
 appId: 63089
-bundleId: 280716
+bundleId: 280822
 url: https://ijlyttle.shinyapps.io/shinychord_dygraphs
-when: 1443993373.13564
+when: 1444009673.42387

@@ -3,8 +3,14 @@ shinyUI(
   fluidPage(
     titlePanel("dygraphs demo"),
     sidebarLayout(
-      sidebarPanel(chord_dygraph$ui_controller),
-      mainPanel(chord_dygraph$ui_view)
+      # generally, controllers go in a sidebarPanel
+      sidebarPanel(
+        chord_dygraph$ui_controller
+      ),
+      # generally, views go in the mainPanel
+      mainPanel(
+        chord_dygraph$ui_view
+      )
     )
   )
 )
