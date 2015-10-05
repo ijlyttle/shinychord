@@ -33,17 +33,17 @@
         <h1>
 <a id="shinychord" class="anchor" href="#shinychord" aria-hidden="true"><span class="octicon octicon-link"></span></a>shinychord</h1>
 
-<p>The puropse of this package is to propose a convention for resuable shiny modules.</p>
+<p>The purpose of this package is to propose a convention for reusable shiny modules.</p>
 
 <p>This might be useful for shiny code where:</p>
 
 <ul>
-<li>there are a lot of controls that are importatnt only within the module.</li>
-<li>there is a need to use the module in different apps.</li>
+<li>things can be broken down into modules</li>
+<li>within each module, the are a lot of controls are important only within the module</li>
+<li>there may be a need to use modules in different apps</li>
 </ul>
 
-<p>We give a way to help ensure unique id's for each of the input and output elements.
-We give a way to expose only a few reactive values.</p>
+<p>One benefit is that the server logic for a given module is encapsulated, while exposing only a few reactive values and the ui elements.</p>
 
 <h2>
 <a id="tldr" class="anchor" href="#tldr" aria-hidden="true"><span class="octicon octicon-link"></span></a>tl;dr</h2>
@@ -65,10 +65,12 @@ We give a way to expose only a few reactive values.</p>
 <li>
 <code>ui_view</code> a <code>shiny::tagList</code> containing ui elements focusing on outputs</li>
 <li>
-<code>server_model</code> a function that contains all the server logic</li>
+<code>server_model</code> a function that contains all the server logic, and exposes reactive values</li>
 </ul>
 
 <p>As you might imagine, the names on this list are inspired by the model-view-controller paradigm.</p>
+
+<p>There is nothing mandatory or scared about the names of these elements, it is only a proposed convention. Furthermore, the elements of each <code>shiny::taglist</code> are available if you want to select or arrange them differently.</p>
 
 <h2>
 <a id="example" class="anchor" href="#example" aria-hidden="true"><span class="octicon octicon-link"></span></a>Example</h2>
@@ -102,7 +104,7 @@ We give a way to expose only a few reactive values.</p>
 <h3>
 <a id="naming-function" class="anchor" href="#naming-function" aria-hidden="true"><span class="octicon octicon-link"></span></a>Naming function</h3>
 
-<p>One of the challenges we have in composing shiny applications is a way to keep the names unique amomg each of the elements.</p>
+<p>One of the challenges we have in composing shiny applications is a way to keep the names unique among each of the elements.</p>
 
 <p>To help us, I put a function at the top of the shinychord:</p>
 
