@@ -168,7 +168,9 @@ ch_dygraph <- function(id){
 
       # create the mts object
       vec_time <- rct_data()[[var_time]]
-      df_num <- rct_data()[, c(var_y1, var_y2)]
+      df_num <- rct_data()[c(var_y1, var_y2)]
+
+      print(names(df_num))
 
       dy_xts <- xts::xts(df_num, order.by = vec_time, lubridate::tz(vec_time))
 
