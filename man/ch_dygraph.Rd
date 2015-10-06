@@ -51,7 +51,7 @@ Its arguments are:
  \item{\code{rctval_dyopt, item_dyopt}}{
    \code{shiny::reactiveValues} object, character string.
    The default value for \code{rctval_dyopt} is \code{rctval_dyopt}.
-   \code{rctval_data[[item_data]]} is expected to be a list of dygraph options,
+   \code{rctval_dyopt[[rctval_dyopt]]} is expected to be a list of dygraph options,
    see documentation for \code{dygraphs::dyOptions}
  }
 }
