@@ -1,7 +1,3 @@
-library("shiny")
-library("shinyjs")
-library("shinychord")
-
 shinyUI(
   fluidPage(
     useShinyjs(),

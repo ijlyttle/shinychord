@@ -1,7 +1,3 @@
-library("shiny")
-library("shinychord")
-library("dplyr")
-
 shinyServer(function(input, output, session) {
 
   rctval_temp <- reactiveValues(
