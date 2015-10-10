@@ -18,9 +18,9 @@
 #'  \item{\code{delim}}{\code{shiny::selectInput} used to select the delimiter character }
 #'  \item{\code{decimal_mark}}{\code{shiny::selectInput used to select the decimal-mark character}}
 #'  \item{\code{tz_parse}}{\code{shiny::selectInput used to select the timezone used to parse}}
-#'  \item{\code{tz_parse_model}}{\code{shinyBS::bsModal used for timezone help}}
+#'  \item{\code{tz_parse_modal}}{\code{shinyBS::bsModal used for timezone help}}
 #'  \item{\code{tz_display}}{\code{shiny::selectInput used to select the timezone to display}}
-#'  \item{\code{tz_display_model}}{\code{shinyBS::bsModal used for timezone help}}
+#'  \item{\code{tz_display_modal}}{\code{shinyBS::bsModal used for timezone help}}
 #' }
 #'
 #' Note that the `tz` input will serve as an argument to `readr::locale`;
@@ -159,20 +159,12 @@ ch_read_delim <- function(id, defaults = list(delim = ",", decimal_mark = ".")){
   ## ui_view ##
   ui_view <- shiny::tagList()
 
-  # http://stackoverflow.com/questions/10374171/how-to-make-twitter-bootstraps-pre-blocks-scroll-horizontally
-  fn_container <- function(...){
-    htmltools::pre(
-      ...,
-      style = "overflow: auto; word-wrap: normal; white-space: pre;"
-    )
-  }
-
   # shows the raw text of the file (first few lines)
   id_view_text <- id_name("view", "text")
   ui_view$text <-
     shiny::htmlOutput(
       outputId = id_view_text,
-      container = fn_container
+      container = pre_scroll
     )
 
   # shows the first few lines of the parsed data-frame
@@ -180,7 +172,7 @@ ch_read_delim <- function(id, defaults = list(delim = ",", decimal_mark = ".")){
   ui_view$data <-
     shiny::htmlOutput(
       outputId = id_view_data,
-      container = fn_container
+      container = pre_scroll
     )
 
   ## server_model ##

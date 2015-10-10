@@ -1,0 +1,19 @@
+shinyUI(
+  fluidPage(
+    useShinyjs(),
+    sidebarLayout(
+      sidebarPanel(
+        h3("Read"),
+        chord_read$ui_controller,
+        h3("Write"),
+        chord_write$ui_controller
+      ),
+      mainPanel(
+        h3("Read"),
+        chord_read$ui_view,
+        h3("Write"),
+        chord_write$ui_view
+      )
+    )
+  )
+)

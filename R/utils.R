@@ -62,3 +62,21 @@ df_with_tz <- function(df, tz = "UTC"){
 
   df
 }
+
+#
+
+#' function for scrollable pre-formatted text
+#'
+#' This is used as the \code{container} argument in \code{shiny::htmlOutput}
+#'
+#' @param ... expression used to fill text
+#'
+#' @source \url{http://stackoverflow.com/questions/10374171/how-to-make-twitter-bootstraps-pre-blocks-scroll-horizontally}
+#' @export
+#'
+pre_scroll <- function(...){
+  htmltools::pre(
+    ...,
+    style = "overflow: auto; word-wrap: normal; white-space: pre;"
+  )
+}
