@@ -117,6 +117,21 @@ ch_dygraph <- function(id){
       selection$Y2 <- input[[id_controller_y2]]
     })
 
+    # when the y-variables change,
+    #   if there are y-varaiables available to select,
+    #     and there are no y-variables selected:
+    #     then - put the first y-variable on the Y1 axis
+    shiny::observeEvent(
+      eventExpr = rct_var_num(),
+      handlerExpr = {
+        if (!is.null(rct_var_num()) &&
+            is.null(selection$Y1) &&
+            is.null(selection$Y2)       ){
+          selection$Y1 <- rct_var_num()[[1]]
+        }
+      }
+    )
+
     # outputs
 
     # select time variable
@@ -162,8 +177,8 @@ ch_dygraph <- function(id){
       var_y2 <- selection$Y2
 
       shiny::validate(
-        shiny::need(var_time, "No time-variable"),
-        shiny::need(c(var_y1, var_y2), "No y-variables")
+        shiny::need(var_time, "Graph cannot display without a time-variable"),
+        shiny::need(c(var_y1, var_y2), "Graph cannot display without any y-variables")
       )
 
       # create the mts object
