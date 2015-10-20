@@ -125,6 +125,7 @@ ch_dygraph <- function(id){
       eventExpr = rct_var_num(),
       handlerExpr = {
         if (!is.null(rct_var_num()) &&
+            !identical(length(rct_var_num(), 0)) &&
             is.null(selection$Y1) &&
             is.null(selection$Y2)       ){
           selection$Y1 <- rct_var_num()[[1]]
