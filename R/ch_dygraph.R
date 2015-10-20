@@ -104,6 +104,8 @@ ch_dygraph <- function(id){
       df_names_inherits(rct_data(), c("numeric", "integer"))
     })
 
+    observe(print(str(rct_var_num())))
+
     selection <- reactiveValues(
       time = NULL,
       Y1 = NULL,
