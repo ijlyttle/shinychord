@@ -101,10 +101,15 @@ ch_dygraph <- function(id){
     })
 
     rct_var_num <- reactive({
-      df_names_inherits(rct_data(), c("numeric", "integer"))
-    })
 
-    observe(print(str(rct_var_num())))
+      var_num <- df_names_inherits(rct_data(), c("numeric", "integer"))
+
+      shiny::validate(
+        shiny::need(var_num, "Cannot display graph: dataset has no numeric variables")
+      )
+
+      var_num
+    })
 
     selection <- reactiveValues(
       time = NULL,
@@ -126,10 +131,8 @@ ch_dygraph <- function(id){
     shiny::observeEvent(
       eventExpr = rct_var_num(),
       handlerExpr = {
-        if (!is.null(rct_var_num()) &&
-            !identical(length(rct_var_num(), 0)) &&
-            is.null(selection$Y1) &&
-            is.null(selection$Y2)       ){
+        if (is.null(selection$Y1) &&
+            is.null(selection$Y2)   ){
           selection$Y1 <- rct_var_num()[[1]]
         }
       }
