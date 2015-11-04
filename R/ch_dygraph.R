@@ -76,6 +76,11 @@ ch_dygraph <- function(id){
   ui_view <- shiny::tagList()
 
   # dygraph
+  ui_view$hint <-
+    tags$pre(
+      "Zoom: Click-drag\tPan: Shift-Click-Drag\tReset: Double-Click"
+    )
+
   id_view_dygraph <- id_name("view", "dygraph")
   ui_view$dygraph <- dygraphs::dygraphOutput(id_view_dygraph)
 
