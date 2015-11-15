@@ -54,13 +54,15 @@ ch_input_hours <- function(id, title = "") {
       }
 
       if(is.na(hour)) {
-        return(c(NA, NA))
+        #return(c(NA, NA))
+        return(NA)
       }
       if(is.na(min)) {
         min = 0
       }
 
-      return(c(hour, min))
+      #return(c(hour, min))
+      return(hour + round(min/60))
     })
 
     ## observers ##
