@@ -1,3 +1,4 @@
+#' @export
 ch_input_time <- function(id, title = "", default = "24:00") {
 
   id_name <- function(...){
