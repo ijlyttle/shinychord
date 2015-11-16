@@ -57,7 +57,7 @@ ch_input_time_compound <- function(id, label = "", step = c(1, 5), default = c(2
   ## ui_controller ##
   ui_controller <- shiny::tagList(
     shiny::tags$label(label, `for` = id_controller_hour),
-    shiny::fixedRow(
+    shiny::fluidRow(
       shiny::column(
         width = 4,
         shiny::numericInput(
