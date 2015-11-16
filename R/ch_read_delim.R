@@ -50,7 +50,7 @@
 #'
 #' @return list containing \code{ui_controller}, \code{ui_view}, and \code{server_model}
 #' @export
-#'
+#
 ch_read_delim <- function(id, defaults = list(delim = ",", decimal_mark = ".")){
 
   id_name <- function(...){

@@ -46,7 +46,7 @@
 #'
 #' @return list containing \code{ui_controller}, \code{ui_view}, and \code{server_model}
 #' @export
-#'
+#
 ch_dygraph <- function(id){
 
   id_name <- function(...){
