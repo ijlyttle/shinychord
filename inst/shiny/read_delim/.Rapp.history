@@ -1,0 +1,708 @@
+runif(10, 0, 1)
+setwd("~")#
+dat = read.csv("Downloads/stat101f14grades.csv")#
+#
+d = dat[,c(1:3, 	# names#
+			21, 	# course survey#
+			22, 	# lab total#
+			34, 	# written hw#
+			50, 	# quiz total#
+			51:69, 	# online homework#
+			89, 	# midterm#
+			90:94, 	# assessment 1 - 5#
+			95, 	# personal glossaries,#
+			96		# final exam#
+			)]#
+#
+d[is.na(d)] = 0#
+#
+#lab adjustments
+d[4]
+as.character(d[4])
+d
+as.character(d[,4])
+setwd("~")#
+dat = read.csv("Downloads/stat101f14grades.csv")#
+#
+d = dat[,c(1:3, 	# names#
+			21, 	# course survey#
+			22, 	# lab total#
+			34, 	# written hw#
+			50, 	# quiz total#
+			51:69, 	# online homework#
+			89, 	# midterm#
+			90:94, 	# assessment 1 - 5#
+			95, 	# personal glossaries,#
+			96,		# final exam#
+			97		# final exam extra credit#
+			)]#
+d[is.na(d)] = 0#
+#
+#lab adjustments#
+d[,4] = 15 * (as.numeric(d[,4]) - 1)#
+lab = (d[,5] + d[,4]) / 360#
+lab[lab > 1] = 1#
+#
+#written homework adjustments#
+written = d[,6] / 290#
+written[written > 1] = 1#
+#
+#online homework adjustments#
+online = apply(d[,8:26], 1, sum) / 490#
+online[online > 1] = 1#
+#
+#unit assessments#
+unit1 = d[,28] / 50#
+unit2 = d[,29] / 50#
+unit3 = d[,30] / 30#
+unit4 = d[,31] / 50#
+unit5 = d[,32] / 50#
+#
+#exams#
+final = (d[,34] + d[35]) / 80#
+final[final > 1] = 1#
+midterm = d[,27] / 65#
+#final exam extra credit ##IGNORE THIS###
+ec = read.csv("~/Downloads/extra_credit_101.csv", stringsAsFactors = FALSE)[8:70, 1]#
+ec_names = unlist(lapply(strsplit(ec, " "), function(x){#
+					return(paste0(x[2], ", ", x[1]))}))#
+ec_names = sort(ec_names)#
+#final exam extra credit ##IGNORE THIS###
+#PG#
+pg = d[,33] / 50#
+#
+#quiz adjustments#
+quiz = d[,7] / 80#
+#
+#final grades#
+grade_list = d[,1:3]#
+grade_list$pct = 0.07*(online + lab + written) + #
+				0.08*(unit1 + unit2 + unit3 + unit4 + unit5) + #
+				0.16*(final + midterm) + 0.02*(pg) + 0.05*(quiz) #
+names(grade_list) = c("last", "first", "user", "pct")#
+grade_list$g = NA#
+grade_list[order(grade_list$grade),]
+grade_list
+names(grade_list)
+setwd("~")#
+dat = read.csv("Downloads/stat101f14grades.csv")#
+#
+d = dat[,c(1:3, 	# names#
+			21, 	# course survey#
+			22, 	# lab total#
+			34, 	# written hw#
+			50, 	# quiz total#
+			51:69, 	# online homework#
+			89, 	# midterm#
+			90:94, 	# assessment 1 - 5#
+			95, 	# personal glossaries,#
+			96,		# final exam#
+			97		# final exam extra credit#
+			)]#
+d[is.na(d)] = 0#
+#
+#lab adjustments#
+d[,4] = 15 * (as.numeric(d[,4]) - 1)#
+lab = (d[,5] + d[,4]) / 360#
+lab[lab > 1] = 1#
+#
+#written homework adjustments#
+written = d[,6] / 290#
+written[written > 1] = 1#
+#
+#online homework adjustments#
+online = apply(d[,8:26], 1, sum) / 490#
+online[online > 1] = 1#
+#
+#unit assessments#
+unit1 = d[,28] / 50#
+unit2 = d[,29] / 50#
+unit3 = d[,30] / 30#
+unit4 = d[,31] / 50#
+unit5 = d[,32] / 50#
+#
+#exams#
+final = (d[,34] + d[35]) / 80#
+final[final > 1] = 1#
+midterm = d[,27] / 65#
+#final exam extra credit ##IGNORE THIS###
+ec = read.csv("~/Downloads/extra_credit_101.csv", stringsAsFactors = FALSE)[8:70, 1]#
+ec_names = unlist(lapply(strsplit(ec, " "), function(x){#
+					return(paste0(x[2], ", ", x[1]))}))#
+ec_names = sort(ec_names)#
+#final exam extra credit ##IGNORE THIS###
+#PG#
+pg = d[,33] / 50#
+#
+#quiz adjustments#
+quiz = d[,7] / 80#
+#
+#final grades#
+grade_list = d[,1:3]
+grade_list
+grade_list$pct = NA
+grade_list
+0.07*(online + lab + written) + #
+				0.08*(unit1 + unit2 + unit3 + unit4 + unit5) + #
+				0.16*(final + midterm) + 0.02*(pg) + 0.05*(quiz)
+0.07*(online + lab + written) + #
+				0.08*(unit1 + unit2 + unit3 + unit4 + unit5)
+0.07*(online + lab + written) + #
+				0.08*(unit1 + unit2 + unit3 + unit4 + unit5) + #
+				0.16*(final + midterm) + 0.02*(pg) + 0.05*(quiz)
+test = 0.07*(online + lab + written) + #
+				0.08*(unit1 + unit2 + unit3 + unit4 + unit5) + #
+				0.16*(final + midterm) + 0.02*(pg) + 0.05*(quiz)
+test
+attr(test)
+attr(name, test)
+final
+midterm
+as.vector(final)
+str(final)
+final[1]
+final[,1]
+setwd("~")#
+dat = read.csv("Downloads/stat101f14grades.csv")#
+#
+d = dat[,c(1:3, 	# names#
+			21, 	# course survey#
+			22, 	# lab total#
+			34, 	# written hw#
+			50, 	# quiz total#
+			51:69, 	# online homework#
+			89, 	# midterm#
+			90:94, 	# assessment 1 - 5#
+			95, 	# personal glossaries,#
+			96,		# final exam#
+			97		# final exam extra credit#
+			)]#
+d[is.na(d)] = 0#
+#
+#lab adjustments#
+d[,4] = 15 * (as.numeric(d[,4]) - 1)#
+lab = (d[,5] + d[,4]) / 360#
+lab[lab > 1] = 1#
+#
+#written homework adjustments#
+written = d[,6] / 290#
+written[written > 1] = 1#
+#
+#online homework adjustments#
+online = apply(d[,8:26], 1, sum) / 490#
+online[online > 1] = 1#
+#
+#unit assessments#
+unit1 = d[,28] / 50#
+unit2 = d[,29] / 50#
+unit3 = d[,30] / 30#
+unit4 = d[,31] / 50#
+unit5 = d[,32] / 50#
+#
+#exams#
+final = (d[,34] + d[,35]) / 80#
+final[final > 1] = 1#
+midterm = d[,27] / 65#
+#final exam extra credit ##IGNORE THIS###
+ec = read.csv("~/Downloads/extra_credit_101.csv", stringsAsFactors = FALSE)[8:70, 1]#
+ec_names = unlist(lapply(strsplit(ec, " "), function(x){#
+					return(paste0(x[2], ", ", x[1]))}))#
+ec_names = sort(ec_names)#
+#final exam extra credit ##IGNORE THIS###
+#PG#
+pg = d[,33] / 50#
+#
+#quiz adjustments#
+quiz = d[,7] / 80#
+#
+#final grades#
+grade_list = d[,1:3]#
+grade_list$pct = 0.07*(online + lab + written) + #
+				0.08*(unit1 + unit2 + unit3 + unit4 + unit5) + #
+				0.16*(final + midterm) + 0.02*(pg) + 0.05*(quiz) #
+names(grade_list) = c("last", "first", "user", "pct")#
+grade_list$g = NA#
+grade_list[order(grade_list$pct),]
+#final grades#
+grade_list = d[,1:3]#
+grade_list$pct = 0.07*(online + lab + written) + #
+				0.08*(unit1 + unit2 + unit3 + unit4 + unit5) + #
+				0.16*(final + midterm) + 0.02*(pg) + 0.05*(quiz) #
+names(grade_list) = c("last", "first", "user", "pct")#
+grade_list$g = NA#
+#
+grade_list[grade_list$pct > 91,]$g = "A"#
+grade_list[grade_list$pct < 91 & grade_list$pct > 88] = "A-"#
+grade_list[grade_list$pct < 88 & grade_list$pct > 86] = "B+"#
+grade_list[grade_list$pct < 86 & grade_list$pct > 78] = "B"#
+grade_list[grade_list$pct < 78 & grade_list$pct > 75] = "B-"#
+grade_list[grade_list$pct < 75 & grade_list$pct > 73] = "C+"#
+grade_list[grade_list$pct < 73 & grade_list$pct > 68] = "C"#
+grade_list[grade_list$pct < 68 & grade_list$pct > 65] = "C-"#
+grade_list[grade_list$pct < 65 & grade_list$pct > 63] = "D+"#
+grade_list[grade_list$pct < 63 & grade_list$pct > 57] = "D"#
+grade_list[grade_list$pct < 57 & grade_list$pct > 55] = "D-"#
+grade_list[grade_list$pct < 75] = "F"
+#final grades#
+grade_list = d[,1:3]#
+grade_list$pct = 0.07*(online + lab + written) + #
+				0.08*(unit1 + unit2 + unit3 + unit4 + unit5) + #
+				0.16*(final + midterm) + 0.02*(pg) + 0.05*(quiz) #
+names(grade_list) = c("last", "first", "user", "pct")#
+grade_list$g = NA
+grade_list
+grade_list[grade_list$pct > 91,]
+grade_list[grade_list$pct > 91,]grade_list = d[,1:3]#
+grade_list$pct = 0.07*(online + lab + written) + #
+				0.08*(unit1 + unit2 + unit3 + unit4 + unit5) + #
+				0.16*(final + midterm) + 0.02*(pg) + 0.05*(quiz) #
+grade_list$pct = grade_list$pct * 100#
+names(grade_list) = c("last", "first", "user", "pct")#
+grade_list$g = NA
+grade_list = d[,1:3]#
+grade_list$pct = 0.07*(online + lab + written) + #
+				0.08*(unit1 + unit2 + unit3 + unit4 + unit5) + #
+				0.16*(final + midterm) + 0.02*(pg) + 0.05*(quiz) #
+grade_list$pct = grade_list$pct * 100#
+names(grade_list) = c("last", "first", "user", "pct")#
+grade_list$g = NA
+grade_list
+setwd("~")#
+dat = read.csv("Downloads/stat101f14grades.csv")#
+#
+d = dat[,c(1:3, 	# names#
+			21, 	# course survey#
+			22, 	# lab total#
+			34, 	# written hw#
+			50, 	# quiz total#
+			51:69, 	# online homework#
+			89, 	# midterm#
+			90:94, 	# assessment 1 - 5#
+			95, 	# personal glossaries,#
+			96,		# final exam#
+			97		# final exam extra credit#
+			)]#
+d[is.na(d)] = 0#
+#
+#lab adjustments#
+d[,4] = 15 * (as.numeric(d[,4]) - 1)#
+lab = (d[,5] + d[,4]) / 360#
+lab[lab > 1] = 1#
+#
+#written homework adjustments#
+written = d[,6] / 290#
+written[written > 1] = 1#
+#
+#online homework adjustments#
+online = apply(d[,8:26], 1, sum) / 490#
+online[online > 1] = 1#
+#
+#unit assessments#
+unit1 = d[,28] / 50#
+unit2 = d[,29] / 50#
+unit3 = d[,30] / 30#
+unit4 = d[,31] / 50#
+unit5 = d[,32] / 50#
+#
+#exams#
+final = (d[,34] + d[,35]) / 80#
+final[final > 1] = 1#
+midterm = d[,27] / 65#
+#final exam extra credit ##IGNORE THIS###
+ec = read.csv("~/Downloads/extra_credit_101.csv", stringsAsFactors = FALSE)[8:70, 1]#
+ec_names = unlist(lapply(strsplit(ec, " "), function(x){#
+					return(paste0(x[2], ", ", x[1]))}))#
+ec_names = sort(ec_names)#
+#final exam extra credit ##IGNORE THIS###
+#PG#
+pg = d[,33] / 50#
+#
+#quiz adjustments#
+quiz = d[,7] / 80#
+#
+#final grades#
+grade_list = d[,1:3]#
+grade_list$pct = 0.07*(online + lab + written) + #
+				0.08*(unit1 + unit2 + unit3 + unit4 + unit5) + #
+				0.16*(final + midterm) + 0.02*(pg) + 0.05*(quiz) #
+grade_list$pct = grade_list$pct * 100#
+names(grade_list) = c("last", "first", "user", "pct")#
+grade_list$g = NA#
+#
+grade_list[grade_list$pct > 91,]$g = "A"#
+grade_list[grade_list$pct < 91 & grade_list$pct > 88]$g = "A-"#
+grade_list[grade_list$pct < 88 & grade_list$pct > 86]$g = "B+"#
+grade_list[grade_list$pct < 86 & grade_list$pct > 78]$g = "B"#
+grade_list[grade_list$pct < 78 & grade_list$pct > 75]$g = "B-"#
+grade_list[grade_list$pct < 75 & grade_list$pct > 73]$g = "C+"#
+grade_list[grade_list$pct < 73 & grade_list$pct > 68]$g = "C"#
+grade_list[grade_list$pct < 68 & grade_list$pct > 65]$g = "C-"#
+grade_list[grade_list$pct < 65 & grade_list$pct > 63]$g = "D+"#
+grade_list[grade_list$pct < 63 & grade_list$pct > 57]$g = "D"#
+grade_list[grade_list$pct < 57 & grade_list$pct > 55]$g = "D-"#
+grade_list[grade_list$pct < 75]$g = "F"
+grade_list
+grade_list[grade_list$pct < 91 & grade_list$pct > 88]
+setwd("~")#
+dat = read.csv("Downloads/stat101f14grades.csv")#
+#
+d = dat[,c(1:3, 	# names#
+			21, 	# course survey#
+			22, 	# lab total#
+			34, 	# written hw#
+			50, 	# quiz total#
+			51:69, 	# online homework#
+			89, 	# midterm#
+			90:94, 	# assessment 1 - 5#
+			95, 	# personal glossaries,#
+			96,		# final exam#
+			97		# final exam extra credit#
+			)]#
+d[is.na(d)] = 0#
+#
+#lab adjustments#
+d[,4] = 15 * (as.numeric(d[,4]) - 1)#
+lab = (d[,5] + d[,4]) / 360#
+lab[lab > 1] = 1#
+#
+#written homework adjustments#
+written = d[,6] / 290#
+written[written > 1] = 1#
+#
+#online homework adjustments#
+online = apply(d[,8:26], 1, sum) / 490#
+online[online > 1] = 1#
+#
+#unit assessments#
+unit1 = d[,28] / 50#
+unit2 = d[,29] / 50#
+unit3 = d[,30] / 30#
+unit4 = d[,31] / 50#
+unit5 = d[,32] / 50#
+#
+#exams#
+final = (d[,34] + d[,35]) / 80#
+final[final > 1] = 1#
+midterm = d[,27] / 65#
+#final exam extra credit ##IGNORE THIS###
+ec = read.csv("~/Downloads/extra_credit_101.csv", stringsAsFactors = FALSE)[8:70, 1]#
+ec_names = unlist(lapply(strsplit(ec, " "), function(x){#
+					return(paste0(x[2], ", ", x[1]))}))#
+ec_names = sort(ec_names)#
+#final exam extra credit ##IGNORE THIS###
+#PG#
+pg = d[,33] / 50#
+#
+#quiz adjustments#
+quiz = d[,7] / 80#
+#
+#final grades#
+grade_list = d[,1:3]#
+grade_list$pct = 0.07*(online + lab + written) + #
+				0.08*(unit1 + unit2 + unit3 + unit4 + unit5) + #
+				0.16*(final + midterm) + 0.02*(pg) + 0.05*(quiz) #
+grade_list$pct = grade_list$pct * 100#
+names(grade_list) = c("last", "first", "user", "pct")#
+grade_list$g = NA#
+#
+grade_list[grade_list$pct > 91,]$g = "A"#
+grade_list[grade_list$pct < 91 & grade_list$pct > 88,]$g = "A-"#
+grade_list[grade_list$pct < 88 & grade_list$pct > 86,]$g = "B+"#
+grade_list[grade_list$pct < 86 & grade_list$pct > 78,]$g = "B"#
+grade_list[grade_list$pct < 78 & grade_list$pct > 75,]$g = "B-"#
+grade_list[grade_list$pct < 75 & grade_list$pct > 73,]$g = "C+"#
+grade_list[grade_list$pct < 73 & grade_list$pct > 68,]$g = "C"#
+grade_list[grade_list$pct < 68 & grade_list$pct > 65,]$g = "C-"#
+grade_list[grade_list$pct < 65 & grade_list$pct > 63,]$g = "D+"#
+grade_list[grade_list$pct < 63 & grade_list$pct > 57,]$g = "D"#
+grade_list[grade_list$pct < 57 & grade_list$pct > 55,]$g = "D-"#
+grade_list[grade_list$pct < 75,]$g = "F"
+grade_list
+grade_list[order(grade_list$pct),]
+setwd("~")#
+dat = read.csv("Downloads/stat101f14grades.csv")#
+#
+d = dat[,c(1:3, 	# names#
+			21, 	# course survey#
+			22, 	# lab total#
+			34, 	# written hw#
+			50, 	# quiz total#
+			51:69, 	# online homework#
+			89, 	# midterm#
+			90:94, 	# assessment 1 - 5#
+			95, 	# personal glossaries,#
+			96,		# final exam#
+			97		# final exam extra credit#
+			)]#
+d[is.na(d)] = 0#
+#
+#lab adjustments#
+d[,4] = 15 * (as.numeric(d[,4]) - 1)#
+lab = (d[,5] + d[,4]) / 360#
+lab[lab > 1] = 1#
+#
+#written homework adjustments#
+written = d[,6] / 290#
+written[written > 1] = 1#
+#
+#online homework adjustments#
+online = apply(d[,8:26], 1, sum) / 490#
+online[online > 1] = 1#
+#
+#unit assessments#
+unit1 = d[,28] / 50#
+unit2 = d[,29] / 50#
+unit3 = d[,30] / 30#
+unit4 = d[,31] / 50#
+unit5 = d[,32] / 50#
+#
+#exams#
+final = (d[,34] + d[,35]) / 80#
+final[final > 1] = 1#
+midterm = d[,27] / 65#
+#final exam extra credit ##IGNORE THIS###
+ec = read.csv("~/Downloads/extra_credit_101.csv", stringsAsFactors = FALSE)[8:70, 1]#
+ec_names = unlist(lapply(strsplit(ec, " "), function(x){#
+					return(paste0(x[2], ", ", x[1]))}))#
+ec_names = sort(ec_names)#
+#final exam extra credit ##IGNORE THIS###
+#PG#
+pg = d[,33] / 50#
+#
+#quiz adjustments#
+quiz = d[,7] / 80#
+#
+#final grades#
+grade_list = d[,1:3]#
+grade_list$pct = 0.07*(online + lab + written) + #
+				0.08*(unit1 + unit2 + unit3 + unit4 + unit5) + #
+				0.16*(final + midterm) + 0.02*(pg) + 0.05*(quiz) #
+grade_list$pct = grade_list$pct * 100#
+names(grade_list) = c("last", "first", "user", "pct")#
+grade_list$g = NA#
+#
+grade_list[grade_list$pct > 91,]$g = "A"#
+grade_list[grade_list$pct < 91 & grade_list$pct > 88,]$g = "A-"#
+grade_list[grade_list$pct < 88 & grade_list$pct > 86,]$g = "B+"#
+grade_list[grade_list$pct < 86 & grade_list$pct > 78,]$g = "B"#
+grade_list[grade_list$pct < 78 & grade_list$pct > 75,]$g = "B-"#
+grade_list[grade_list$pct < 75 & grade_list$pct > 73,]$g = "C+"#
+grade_list[grade_list$pct < 73 & grade_list$pct > 68,]$g = "C"#
+grade_list[grade_list$pct < 68 & grade_list$pct > 65,]$g = "C-"#
+grade_list[grade_list$pct < 65 & grade_list$pct > 63,]$g = "D+"#
+grade_list[grade_list$pct < 63 & grade_list$pct > 57,]$g = "D"#
+grade_list[grade_list$pct < 57 & grade_list$pct > 55,]$g = "D-"#
+grade_list[grade_list$pct < 55,]$g = "F"#
+#
+grade_list[order(grade_list$pct),]
+help(write.csv)
+.618^8
+.618^16
+library(httr)#
+library(jsonlite)#
+url = "http://order-rate-project.elasticbeanstalk.com/games"#
+req = POST(url)#
+url = paste0(url, "/", game_id, "/next_turn")#
+game_id = content(req)$id#
+max_turn = content(req)$n_turns#
+turn_num = content(req)$n_turns_elapsed#
+cust_id = unlist(content(req)$customer_ids)#
+pred = data.frame(cust_id, p = rep(0, length(cust_id)))#
+content = toJSON(list(prediction = split(pred$p, pred$cust_id)), auto_unbox = TRUE)#
+url = "http://httpbin.org/post"#
+req = POST(url = url, body = content, encode = "json", verbose())#
+content(req)
+pred
+library(httr)#
+library(jsonlite)#
+#
+url = "http://order-rate-project.elasticbeanstalk.com/games"#
+req = POST(url)#
+#
+game_id = content(req)$id#
+max_turn = content(req)$n_turns#
+turn_num = content(req)$n_turns_elapsed#
+cust_id = unlist(content(req)$customer_ids)#
+pred = data.frame(cust_id, p = rep(0, length(cust_id)))#
+url = paste0(url, "/", game_id, "/next_turn")#
+content = toJSON(list(prediction = split(pred$p, pred$cust_id)), auto_unbox = TRUE)#
+url = "http://httpbin.org/post"#
+req = POST(url = url, body = content, encode = "json", verbose())#
+content(req)
+url
+url = "http://order-rate-project.elasticbeanstalk.com/games"
+url = paste0(url, "/", game_id, "/next_turn")
+url
+game_id
+cocontent = toJSON(list(prediction = split(pred$p, pred$cust_id)), auto_unbox = TRUE)
+content = toJSON(list(prediction = split(pred$p, pred$cust_id)), auto_unbox = TRUE)
+content
+as.character(content)
+library(httr)#
+library(jsonlite)#
+#
+url = "http://order-rate-project.elasticbeanstalk.com/games"#
+req = POST(url)#
+#
+game_id = content(req)$id#
+max_turn = content(req)$n_turns#
+turn_num = content(req)$n_turns_elapsed#
+cust_id = unlist(content(req)$customer_ids)#
+pred = data.frame(cust_id, p = rep(0, length(cust_id)))#
+url = paste0(url, "/", game_id, "/next_turn")#
+content = toJSON(list(prediction = split(pred$p, pred$cust_id)), auto_unbox = TRUE)#
+#url = "http://httpbin.org/post"#
+#req = POST(url = url, body = content, encode = "json", verbose())#
+#content(req)\
+game_id
+cust_id
+content
+{u'prediction': {u'3928': 0, u'5742': 0, u'9671': 0, u'7114': 0, u'1546': 0, u'5827': 0, u'3122': 0, u'9983': 0, u'407': 0, u'1370': 0, u'7759': 0, u'1376': 0, u'3760': 0, u'8434': 0, u'5386': 0, u'3486': 0, u'9824': 0, u'3136': 0, u'1021': 0, u'1958': 0, u'8873': 0, u'4736': 0, u'1559': 0, u'1827': 0, u'2494': 0, u'6651': 0, u'378': 0, u'411': 0, u'2906': 0, u'8033': 0, u'3664': 0, u'310': 0, u'7876': 0, u'5494': 0, u'9307': 0, u'7976': 0, u'4417': 0, u'3026': 0, u'7249': 0, u'9544': 0, u'7885': 0, u'7886': 0, u'3258': 0, u'2441': 0, u'8049': 0, u'4195': 0, u'8203': 0, u'6670': 0, u'5676': 0, u'6179': 0, u'4811': 0, u'6420': 0, u'5272': 0, u'7700': 0, u'2570': 0, u'5982': 0, u'5537': 0, u'9555': 0, u'2612': 0, u'7798': 0, u'4345': 0, u'8115': 0, u'5548': 0, u'5545': 0, u'9404': 0, u'3892': 0, u'1030': 0, u'6686': 0, u'754': 0, u'2818': 0, u'5429': 0, u'5957': 0, u'3444': 0, u'862': 0, u'2698': 0, u'4082': 0, u'8366': 0, u'888': 0, u'2739': 0, u'9100': 0, u'238': 0, u'8279': 0, u'1050': 0, u'7188': 0, u'323
+1': 0, u'1056': 0, u'47': 0, u'9817': 0, u'5801': 0, u'2879': 0, u'5200': 0, u'7940': 0, u'3053': 0, u'1807': 0, u'945': 0, u'5630': 0, u'7504': 0, u'8766': 0, u'5932': 0, u'1570': 0}}
+game_id
+content(req)
+url
+content
+help(POST)
+req = POST(url = url, body = content, encode = "json", verbose())
+req = POST(url = url, body = as.character(content), verbose())
+req = POST(url = url, body = content, encode = "json", content_type_json(), verbose())
+url
+id
+game_id
+url = "http://requestb.in/1evpiqo1"
+req = POST(url = url, body = content, encode = "json", content_type_json(), verbose())
+library(httr)#
+library(jsonlite)#
+#
+url = "http://order-rate-project.elasticbeanstalk.com/games"#
+req = POST(url)#
+#
+game_id = content(req)$id#
+max_turn = content(req)$n_turns#
+turn_num = content(req)$n_turns_elapsed#
+cust_id = unlist(content(req)$customer_ids)#
+pred = data.frame(cust_id, p = rep(0, length(cust_id)))#
+url = paste0(url, "/", game_id, "/next_turn")#
+content = toJSON(list(prediction = split(pred$p, pred$cust_id)), auto_unbox = TRUE)#
+#url = "http://httpbin.org/post"#
+req = POST(url = url, body = content, encode = "json", verbose(), add_headers("Content-Type" = "application/json"))#
+#content(req)
+content(req)
+test = env()
+test = new.env()
+test$1 = "blah"
+test$`1` = "blah"
+test
+test$`1`
+as.character(1)
+mean(5)
+library(httr)#
+library(jsonlite)#
+#
+url = "http://order-rate-project.elasticbeanstalk.com/games"#
+#
+#initial request#
+req = POST(url)#
+game_id = content(req)$id#
+max_turn = content(req)$n_turns#
+turn_num = content(req)$n_turns_elapsed#
+cust_id = unlist(content(req)$customer_ids)#
+url = paste0(url, "/", game_id, "/next_turn")#
+#
+#initial predictions are all 0#
+pred = data.frame(cust_id, orders = rep(0, length(cust_id)))#
+#
+#environments are implemented using hashmaps#
+#user_orders = new.env()#
+#update_orders = function() {#
+#
+#}#
+content = toJSON(list(prediction = split(pred$p, pred$cust_id)), auto_unbox = TRUE)#
+req = POST(url = url, body = content, encode = "json", verbose(), add_headers("Content-Type" = "application/json"))#
+#content(req)
+content
+content = toJSON(list(prediction = split(pred$p, pred$cust_id)), auto_unbox = TRUE)
+url
+pred
+library(httr)
+library(jsonlite)
+content = toJSON(list(prediction = split(pred$p, pred$cust_id)), auto_unbox = TRUE)
+content = toJSON(list(prediction = split(pred$orders, pred$cust_id)), auto_unbox = TRUE)
+content
+req = POST(url = url, body = content, encode = "json", verbose(), add_headers("Content-Type" = "application/json"))
+content(req)
+library(httr)#
+library(jsonlite)#
+#
+url = "http://order-rate-project.elasticbeanstalk.com/games"#
+#
+#initial request#
+req = POST(url)#
+game_id = content(req)$id#
+max_turn = content(req)$n_turns#
+turn_num = content(req)$n_turns_elapsed#
+cust_id = unlist(content(req)$customer_ids)#
+url = paste0(url, "/", game_id, "/next_turn")#
+#
+#initial predictions are all 0#
+pred = data.frame(cust_id, orders = rep(0, length(cust_id)))#
+#
+#environments are implemented using hashmaps#
+#user_orders = new.env()#
+#update_orders = function() {#
+#
+#}#
+print(cust_id)#
+content = toJSON(list(prediction = split(pred$orders, pred$cust_id)), auto_unbox = TRUE)#
+req = POST(url = url, body = content, encode = "json", verbose(), add_headers("Content-Type" = "application/json"))#
+print(content(req)$id)#
+#content(req)
+print(cust_id)
+print(content(req)$customer_ids)
+print(content(req))
+print(cust_id)
+378 %in% cust_id
+%in% cust_id4425
+4425 %in% cust_id
+names(content(req))
+content(req)$prediction
+mean(content(req)$prediction)
+mean(unlist(content(req)$prediction))
+content(req)$prediction
+names(content(req))
+mean(unlist(content(req)$actual))
+head(content(req)$actual)
+content(req)$actual$`1708`
+ls
+ls()
+ls(pos = 1)
+.Internal(ls(as.environment(-1L)))
+.Internal(ls(as.environment(-1L)), FALSE)
+2*57.693 - 2*78.123 - 95.250
+2*57.693 - 78.123 - 95.250
+84197-2121.10822
+84197-21211.10822
+84197-21211.10822-47943.65496
+glm
+help(glm)
+cov2cor
+library(RMySQL)
+library(dplyr)
+dbConnect
+install.packages("RMySQL")
+library(RMySQL)
+dbListFields
+dbListTables
+help(dbConnect)
+Sys.setenv(user = "usern")
+Sys.getenv(user)
+Sys.getenv("user")
+Sys.getenv("usern")
+Sys.getenv("user")
+Sys.setenv(user = "usern")
+Sys.getenv("user")
+Sys.setenv(FUCK = "R")
+setwd("~/documents/shinychord/inst/shiny/")
+setwd("~/documents/shinychord/inst/shiny/read_delim")
+shiny::runApp()

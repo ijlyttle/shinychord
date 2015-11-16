@@ -1,4 +1,4 @@
 library("shinychord")
 library("stringr")
 
-chord_read_time <- ch_input_hours("time_1", "Enter Past Horizon Hours")
+chord_read_time <- ch_input_time(id = "time_1", title = "Enter Past Horizon Hours")
