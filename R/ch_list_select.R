@@ -51,7 +51,7 @@
 #'
 #' @return list containing \code{ui_controller}, \code{ui_view}, and \code{server_model}
 #' @export
-#'
+#
 ch_list_select <- function(id, item = "item", plural = NULL) {
 
   id_name <- function(...){

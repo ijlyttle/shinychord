@@ -8,7 +8,7 @@
 #'
 #' @return function
 #' @export
-#'
+#
 cl_file_copy <- function(file_source){
 
   function(file){
@@ -26,7 +26,7 @@ cl_file_copy <- function(file_source){
 #'
 #' @return character vector
 #' @export
-#'
+#
 df_names_inherits <- function(df, what){
 
   inherits_class <- vapply(df, inherits, logical(1), what = what)
@@ -48,7 +48,7 @@ df_names_inherits <- function(df, what){
 #' df_with_tz(coltypes_sample, tz = "America/Chicago")
 #'
 #' @export
-#'
+#
 df_with_tz <- function(df, tz = "UTC"){
 
   is_datetime <- vapply(df, inherits, logical(1), "POSIXct")
@@ -73,7 +73,7 @@ df_with_tz <- function(df, tz = "UTC"){
 #'
 #' @source \url{http://stackoverflow.com/questions/10374171/how-to-make-twitter-bootstraps-pre-blocks-scroll-horizontally}
 #' @export
-#'
+#
 pre_scroll <- function(...){
   htmltools::pre(
     ...,

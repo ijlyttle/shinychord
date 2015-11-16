@@ -45,7 +45,7 @@
 #'
 #' @return list containing \code{ui_controller}, \code{ui_view}, and \code{server_model}
 #' @export
-#'
+#
 ch_write_delim <- function(id, defaults = list(delim = ",")){
 
   id_name <- function(...){
