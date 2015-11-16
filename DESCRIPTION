@@ -9,17 +9,17 @@ Description: Reusable shiny modules
 License: MIT + file LICENSE
 LazyData: TRUE
 Depends:
-  R (>= 3.2.1)
+    R (>= 3.2.1)
 Imports:
-  shiny (>= 0.12.1),
-  shinyjs (>= 0.0.8.3),
-  shinyBS (>= 0.61),
-  readr (>= 0.1.1.9000),
-  dplyr,
-  devtools,
-  htmltools,
-  lubridate,
-  stringr,
-  dygraphs,
-  xts
-
+    shiny (>= 0.12.1),
+    shinyjs (>= 0.0.8.3),
+    shinyBS (>= 0.61),
+    readr (>= 0.1.1.9000),
+    dplyr,
+    devtools,
+    htmltools,
+    lubridate,
+    stringr,
+    dygraphs,
+    xts
+RoxygenNote: 5.0.1
