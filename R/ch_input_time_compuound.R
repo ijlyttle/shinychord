@@ -32,67 +32,51 @@
 #'  \item{\code{input, output, session}}{input, output, session values passed from your server function}
 #'  \item{\code{rctval_input, item_input}}{
 #'    \code{shiny::reactiveValues} object, character string.
-#'    \code{rctval_input[[item_input]]} is expected to be a vector with two integers: hours and minutes.
-#'      In the future, the value will be a single integer - number of seconds.
+#'    \code{rctval_input[[item_input]]} lubridate duration, input/output - number of seconds
 #'  }
 #' }
 #'
 #' @param id      character, tag to prepend to the input and output id's
 #' @param label   character, label for the compound input
 #' @param step    numeric vector for the steps, (hours, minutes)
-#' @param default numeric vector for the default value, (hours, minutes)
 #'
 #' @return list containing \code{ui_controller}, \code{ui_view}, and \code{server_model}
 #' @export
 #
-ch_input_time_compound <- function(id, label = "", step = c(1, 5), default = c(24, 0)) {
+ch_input_time_compound <- function(id, label = "", step = c(1, 5)) {
 
   id_name <- function(...){
     paste(list(id, ...), collapse = "_")
   }
 
+  name_out <- function(x){
+    paste(x, ".out.", sep = "_")
+  }
+
   id_controller_hour <- id_name("controller", "hour")
   id_controller_minute <- id_name("controller", "minute")
+
+  input_hour <-
+    shiny::tagAppendAttributes(
+      shiny::uiOutput(name_out(id_controller_hour)),
+      class = "shinychord-input-time-compound"
+    )
+
+  input_minute <-
+    shiny::tagAppendAttributes(
+      shiny::uiOutput(name_out(id_controller_minute)),
+      class = "shinychord-input-time-compound"
+    )
 
   ## ui_controller ##
   ui_controller <- shiny::tagList(
     shiny::tags$label(label, `for` = id_controller_hour),
-    shiny::fixedRow(
-      shiny::column(
-        width = 4,
-        shiny::numericInput(
-          inputId = id_controller_hour,
-          label = NULL,
-          value = default[[1]],
-          min = 0,
-          max = NA,
-          step = step[[1]]
-        )
-      ),
-      shiny::column(
-        width = 2,
-        tags$p("hr.")
-      ),
-      shiny::column(
-        width = 4,
-        shiny::numericInput(
-          inputId = id_controller_minute,
-          label = NULL,
-          value = default[[2]],
-          min = 0,
-          max = 59,
-          step = step[[2]]
-        )
-      ),
-      shiny::column(
-        width = 2,
-        tags$p("min.")
-      )
-
-
+    shiny::div(
+      input_hour,
+      tags$span("hr."),
+      input_minute,
+      tags$span("min.")
     )
-
-
   )
 
   ## ui_view ##
@@ -108,15 +92,61 @@ ch_input_time_compound <- function(id, label = "", step = c(1, 5), default = c(2
     rctval_input, item_input
   ){
 
-    shiny::observe({
-      rctval_input[[item_input]] <-
-        c(input[[id_controller_hour]], input[[id_controller_minute]])
+    ## reactives ##
+    rct_hhmm <- reactive({
+
+      dur <- rctval_input[[item_input]]
+
+      hh <- floor(dur/lubridate::dhours(1))
+      mm <- floor((dur - lubridate::dhours(hh))/lubridate::dminutes(1))
+
+      c(hh, mm)
     })
 
+    ## observers ##
+    shiny::observeEvent(
+      eventExpr = {
+        input[[id_controller_hour]]
+        input[[id_controller_minute]]
+      },
+      handlerExpr = {
+        rctval_input[[item_input]] <-
+          lubridate::dhours(input[[id_controller_hour]]) +
+          lubridate::dminutes(input[[id_controller_minute]])
+      }
+    )
+
     ## outputs ##
+    output[[name_out(id_controller_hour)]] <-
+      shiny::renderUI(
+        shiny::numericInput(
+          inputId = id_controller_hour,
+          label = NULL,
+          value = rct_hhmm()[[1]],
+          min = 0,
+          max = NA,
+          step = step[[1]],
+          width = "75px"
+        )
+      )
+
+
+    output[[name_out(id_controller_minute)]] <-
+      shiny::renderUI(
+        shiny::numericInput(
+          inputId = id_controller_minute,
+          label = NULL,
+          value = rct_hhmm()[[2]],
+          min = 0,
+          max = 59,
+          step = step[[2]],
+          width = "75px"
+        )
+      )
+
     output[[id_text_time]] <-
       shiny::renderText({
-        rctval_input[[item_input]]
+        format(rctval_input[[item_input]])
       })
 
   }
