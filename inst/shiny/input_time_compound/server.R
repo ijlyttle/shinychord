@@ -1,7 +1,7 @@
 shinyServer(function(input, output, session) {
 
   rctval_temp <- reactiveValues(
-    duration = lubridate::dhours(1) + lubridate::dminutes(30)
+    duration = lubridate::dhours(3) + lubridate::dminutes(30)
   )
 
   chord_read_time$server_model(

@@ -73,9 +73,9 @@ ch_input_time_compound <- function(id, label = "", step = c(1, 5)) {
     shiny::tags$label(label, `for` = id_controller_hour),
     shiny::div(
       input_hour,
-      tags$span("hr."),
+      tags$span("h"),
       input_minute,
-      tags$span("min.")
+      tags$span("m")
     )
   )
 

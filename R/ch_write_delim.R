@@ -229,7 +229,7 @@ ch_write_delim <- function(id, defaults = list(delim = ",")){
       shiny::downloadHandler(
         filename = rct_filename,
         content = function(con){
-          writeLines(rct_txt(), con)
+          writeLines(rct_txt(), con, sep = "\r\n")
         },
         contentType = "text/csv"
       )
