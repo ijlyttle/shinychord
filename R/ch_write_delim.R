@@ -155,11 +155,12 @@ ch_write_delim <- function(id, defaults = list(delim = ",")){
       shinyjs::enable(id_controller_filename)
 
       txt <-
-        readr::write_delim(
+        readr::format_delim(
           x = rct_data(),
-          path = "",
           delim = input[[id_controller_delim]]
         )
+
+      txt <- stringr::str_replace_all(txt, pattern = "\n", replacement = "\r\n")
 
       txt
     })
@@ -229,7 +230,7 @@ ch_write_delim <- function(id, defaults = list(delim = ",")){
       shiny::downloadHandler(
         filename = rct_filename,
         content = function(con){
-          writeLines(rct_txt(), con)
+          writeChar(rct_txt(), con)
         },
         contentType = "text/csv"
       )
