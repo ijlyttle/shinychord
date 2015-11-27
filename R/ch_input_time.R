@@ -72,8 +72,9 @@ ch_input_time <- function(id, title = "", default = "24:00") {
 
     ## observers ##
     observeEvent(
-      eventExpr = rctval_source[[item_source]],
+      eventExpr = rct_parse_text(),
       handlerExpr = {
+        print(rctval_source[[item_source]])
         rctval_source[[item_source]] <- rct_parse_text()
       }
     )
