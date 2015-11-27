@@ -72,10 +72,13 @@ ch_input_time_compound <- function(id, label = "", step = c(1, 5)) {
   ui_controller <- shiny::tagList(
     shiny::tags$label(label, `for` = id_controller_hour),
     shiny::div(
-      input_hour,
-      tags$span("h"),
-      input_minute,
-      tags$span("m")
+      shiny::span(
+        class = "shinychord-input-time-compound",
+        input_hour,
+        "h",
+        input_minute,
+        "m"
+      )
     )
   )
 
