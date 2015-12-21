@@ -239,19 +239,36 @@ ch_read_delim <- function(id, defaults = list(delim = ",", decimal_mark = ".")){
     output[[id_view_text]] <-
       renderUI({
 
-        shinyjs::disable(id_controller_delim)
-        shinyjs::disable(id_controller_decimal_mark)
-        shinyjs::disable(id_controller_tz_parse)
-        shinyjs::disable(id_controller_tz_display)
+        shinyjs::hide(id_controller_delim)
+        shinyjs::hide(id_controller_decimal_mark)
+        shinyjs::hide(id_controller_tz_parse)
+        shinyjs::hide(id_controller_tz_display)
 
         shiny::validate(
           shiny::need(rct_txt(), "File did not load properly")
         )
 
-        shinyjs::enable(id_controller_delim)
-        shinyjs::enable(id_controller_decimal_mark)
-        shinyjs::enable(id_controller_tz_parse)
-        shinyjs::enable(id_controller_tz_display)
+        shinyjs::show(id_controller_delim)
+        shinyjs::show(id_controller_decimal_mark)
+        shinyjs::show(id_controller_tz_parse)
+        shinyjs::show(id_controller_tz_display)
+
+        shinyjs::toggle(
+          id = id_controller_decimal_mark,
+          condition = df_has_numeric(rct_data())
+        )
+
+        shinyjs::toggle(
+          id = id_controller_tz_parse,
+          condition = df_has_time_non_8601(
+            rct_data(), rct_txt(), delim = input[[id_controller_delim]]
+          )
+        )
+
+        shinyjs::toggle(
+          id = id_controller_tz_display,
+          condition = df_has_time(rct_data())
+        )
 
         h <- rct_txt()
         h <- readr::read_lines(h, n_max = 7)
