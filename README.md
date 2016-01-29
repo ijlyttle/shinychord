@@ -1,5 +1,16 @@
 # shinychord
 
+## Please note
+
+**Shinychord is no longer supported**, as it is incompatible with shiny 0.13.0.
+
+This is a **very good thing**, because the [shiny modules](http://shiny.rstudio.com/articles/modules.html) system is superior to what is being done in shinychord.
+
+Instead, you are referred to [shinypod](https://github.com/ijlyttle/shinypod), a package for shiny modules that will do everything that shinychord does (did?) - but it is cleaner, more understandable, and more maintainable.
+
+
+## Introduction
+
 The purpose of this package is to propose a convention for reusable shiny modules.
 
 This might be useful for shiny code where:
